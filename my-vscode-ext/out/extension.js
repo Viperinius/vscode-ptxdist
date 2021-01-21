@@ -21,7 +21,7 @@ const execShell_1 = require("./util/execShell");
 function activate(context) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "my-vscode-ext" is now active!');
+    console.log('Congratulations, your extension "vscode-ptxdist" is now active!');
     let workspaceRootPath = '';
     if (vscode.workspace.workspaceFolders) {
         workspaceRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -34,13 +34,13 @@ function activate(context) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('my-vscode-ext.helloWorld', () => {
+    let disposable = vscode.commands.registerCommand('vscode-ptxdist.helloWorld', () => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World there from my-vscode-ext!');
+        vscode.window.showInformationMessage('Hello World there from vscode-ptxdist!');
     });
     context.subscriptions.push(disposable);
-    disposable = vscode.commands.registerCommand('my-vscode-ext.printWorkspaceRoot', () => __awaiter(this, void 0, void 0, function* () {
+    disposable = vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', () => __awaiter(this, void 0, void 0, function* () {
         let cmd = '';
         if (workspaceRootPath !== '') {
             cmd = 'dir "' + workspaceRootPath + '"';
@@ -53,7 +53,7 @@ function activate(context) {
         }
     }));
     context.subscriptions.push(disposable);
-    disposable = vscode.commands.registerCommand('my-vscode-ext.selectPtxConfig', () => __awaiter(this, void 0, void 0, function* () {
+    disposable = vscode.commands.registerCommand('vscode-ptxdist.selectPtxConfig', () => __awaiter(this, void 0, void 0, function* () {
         let cmd = '';
         if (workspaceRootPath !== '') {
             cmd = 'where /R ' + workspaceRootPath + ' *ptxconfig*';

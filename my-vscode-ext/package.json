@@ -1,6 +1,6 @@
 {
-	"name": "my-vscode-ext",
-	"displayName": "my-vscode-ext",
+	"name": "vscode-ptxdist",
+	"displayName": "PTXdist",
 	"description": "",
 	"version": "0.0.1",
 	"publisher": "Viperinius",
@@ -11,36 +11,36 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:my-vscode-ext.helloWorld",
-		"onCommand:my-vscode-ext.printWorkspaceRoot",
-		"onCommand:my-vscode-ext.selectPtxConfig",
-		"onCommand:my-vscode-ext.ptxcmd-addPreset",
+		"onCommand:vscode-ptxdist.helloWorld",
+		"onCommand:vscode-ptxdist.printWorkspaceRoot",
+		"onCommand:vscode-ptxdist.selectPtxConfig",
+		"onCommand:vscode-ptxdist.ptxcmd-addPreset",
 		"onView:ptxdist-commands"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "my-vscode-ext.helloWorld",
+				"command": "vscode-ptxdist.helloWorld",
 				"title": "Hello World"
 			},
 			{
-				"command": "my-vscode-ext.printWorkspaceRoot",
+				"command": "vscode-ptxdist.printWorkspaceRoot",
 				"title": "Print Workspace Root"
 			},
 			{
-				"command": "my-vscode-ext.selectPtxConfig",
+				"command": "vscode-ptxdist.selectPtxConfig",
 				"title": "Select a ptxconfig"
 			},
 			{
-				"command": "my-vscode-ext.ptxcmd-addPreset",
+				"command": "vscode-ptxdist.ptxcmd-addPreset",
 				"title": "Add a preset for this command"
 			}
 		],
 		"menus": {
 			"view/item/context": [
 				{
-					"command": "my-vscode-ext.ptxcmd-addPreset",
+					"command": "vscode-ptxdist.ptxcmd-addPreset",
 					"when": "view == ptxdist-commands && viewItem == isCmdWithPreset"
 				}
 			]
