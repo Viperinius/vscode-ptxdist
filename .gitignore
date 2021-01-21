@@ -6,3 +6,5 @@
 !.vscode/extensions.json
 *.code-workspace
 
+# node js
+node_modules/
