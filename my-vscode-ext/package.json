@@ -3,6 +3,7 @@
 	"displayName": "my-vscode-ext",
 	"description": "",
 	"version": "0.0.1",
+	"publisher": "Viperinius",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -10,7 +11,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:my-vscode-ext.helloWorld"
+		"onCommand:my-vscode-ext.helloWorld",
+		"onCommand:my-vscode-ext.printWorkspaceRoot",
+		"onCommand:my-vscode-ext.selectPtxConfig",
+		"onCommand:my-vscode-ext.ptxcmd-addPreset",
+		"onView:ptxdist-commands"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -18,8 +23,54 @@
 			{
 				"command": "my-vscode-ext.helloWorld",
 				"title": "Hello World"
+			},
+			{
+				"command": "my-vscode-ext.printWorkspaceRoot",
+				"title": "Print Workspace Root"
+			},
+			{
+				"command": "my-vscode-ext.selectPtxConfig",
+				"title": "Select a ptxconfig"
+			},
+			{
+				"command": "my-vscode-ext.ptxcmd-addPreset",
+				"title": "Add a preset for this command"
 			}
-		]
+		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "my-vscode-ext.ptxcmd-addPreset",
+					"when": "view == ptxdist-commands && viewItem == isCmdWithPreset"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "ptxdist-explorer",
+					"title": "PTXdist",
+					"icon": "resources/ptxdist-icon.svg"
+				}
+			]
+		},
+		"views": {
+			"ptxdist-explorer": [
+				{
+					"id": "ptxdist-general-config",
+					"name": "General Configuration"
+				},
+				{
+					"id": "ptxdist-commands",
+					"name": "Commands"
+				},
+				{
+					"id": "ptxdist-commands-presets",
+					"name": "Command Presets / Favourites",
+					"visibility": "collapsed"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
