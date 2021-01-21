@@ -8,3 +8,6 @@
 
 # node js
 node_modules/
+
+# ignore some temporary test folders
+ptxTestProj/
