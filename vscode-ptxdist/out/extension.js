@@ -60,6 +60,44 @@ function activate(context) {
             element.description = label.replace(workspaceRootPath, '.');
             element.tooltip = label;
             ptxGeneralConfigProvider.refresh([element]);
+            // TODO check if current platform still correct
+            // TODO: run ptxdist select command
+            quickPick.hide();
+        });
+        quickPick.onDidHide(() => quickPick.dispose());
+        quickPick.show();
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPlatformConfig', (element) => __awaiter(this, void 0, void 0, function* () {
+        const findResult = yield fsInteraction_1.findFiles(workspaceRootPath, '*platformconfig*');
+        console.log(findResult);
+        const items = findResult.map(label => ({ label }));
+        const quickPick = vscode.window.createQuickPick();
+        quickPick.items = items;
+        quickPick.onDidChangeSelection(([{ label }]) => {
+            vscode.window.showInformationMessage(`Selected: ${label}`);
+            element.description = label.replace(workspaceRootPath, '.');
+            element.tooltip = label;
+            ptxGeneralConfigProvider.refresh([element]);
+            // TODO check if current platform still correct
+            // TODO: run ptxdist platform command
+            quickPick.hide();
+        });
+        quickPick.onDidHide(() => quickPick.dispose());
+        quickPick.show();
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectToolchain', (element) => __awaiter(this, void 0, void 0, function* () {
+        const findResult = yield fsInteraction_1.findDirs('/opt/', '*arm-linux-gnueabihf/bin');
+        console.log(findResult);
+        const items = findResult.map(label => ({ label }));
+        const quickPick = vscode.window.createQuickPick();
+        quickPick.items = items;
+        quickPick.onDidChangeSelection(([{ label }]) => {
+            vscode.window.showInformationMessage(`Selected: ${label}`);
+            element.description = label.replace(workspaceRootPath, '.');
+            element.tooltip = label;
+            ptxGeneralConfigProvider.refresh([element]);
+            // TODO check if current platform still correct
+            // TODO: run ptxdist platform command
             quickPick.hide();
         });
         quickPick.onDidHide(() => quickPick.dispose());

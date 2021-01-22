@@ -14,6 +14,8 @@
 		"onCommand:vscode-ptxdist.helloWorld",
 		"onCommand:vscode-ptxdist.printWorkspaceRoot",
 		"onCommand:vscode-ptxdist.selectPtxConfig",
+		"onCommand:vscode-ptxdist.selectPlatformConfig",
+		"onCommand:vscode-ptxdist.selectToolchain",
 		"onCommand:vscode-ptxdist.ptxcmd-addPreset",
 		"onView:ptxdist-commands"
 	],
@@ -31,6 +33,14 @@
 			{
 				"command": "vscode-ptxdist.selectPtxConfig",
 				"title": "Select a ptxconfig"
+			},
+			{
+				"command": "vscode-ptxdist.selectPlatformConfig",
+				"title": "Select a platformconfig"
+			},
+			{
+				"command": "vscode-ptxdist.selectToolchain",
+				"title": "Select a toolchain"
 			},
 			{
 				"command": "vscode-ptxdist.ptxcmd-addPreset",

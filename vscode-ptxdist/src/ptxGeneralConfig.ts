@@ -36,12 +36,12 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
 
     private getCmds(parentCmdId?: string): PtxGenConfig[] {
         const rootCmds = [
-            new PtxGenConfig(
+            /*new PtxGenConfig(
                 "Current platform :", 
                 "-", 
                 "Shows the currently selected platform based on the selected menu- and platformconfig",
                 "currPlatform", 
-                vscode.TreeItemCollapsibleState.None),
+                vscode.TreeItemCollapsibleState.None),*/
             new PtxGenConfig(
                 "Current menuconfig :", 
                 "-", 
@@ -54,7 +54,15 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 "-", 
                 "",
                 "selPlatformConfig", 
-                vscode.TreeItemCollapsibleState.None)
+                vscode.TreeItemCollapsibleState.None,
+                "vscode-ptxdist.selectPlatformConfig"),
+            new PtxGenConfig(
+                "Current toolchain :", 
+                "-", 
+                "",
+                "selToolchain", 
+                vscode.TreeItemCollapsibleState.None,
+                "vscode-ptxdist.selectToolchain")
         ];
         
         return rootCmds;

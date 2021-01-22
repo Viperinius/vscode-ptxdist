@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { exec } from './util/execShell';
-import { findFiles } from './util/fsInteraction';
+import { findDirs, findFiles } from './util/fsInteraction';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -58,12 +58,53 @@ export function activate(context: vscode.ExtensionContext) {
 			element.description = label.replace(workspaceRootPath, '.');
 			element.tooltip = label;
 			ptxGeneralConfigProvider.refresh([element]);
+			// TODO check if current platform still correct
+			// TODO: run ptxdist select command
 			quickPick.hide();
 		});
 		quickPick.onDidHide(() => quickPick.dispose());
 		quickPick.show();
 	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPlatformConfig', async (element: PtxGenConfig) => {
+		const findResult = await findFiles(workspaceRootPath, '*platformconfig*');
+		console.log(findResult);
+		
+		const items = findResult.map(label => ({ label }));
+		const quickPick = vscode.window.createQuickPick();
+		quickPick.items = items;
+		quickPick.onDidChangeSelection(([{ label }]) => {
+			vscode.window.showInformationMessage(`Selected: ${label}`);
+			element.description = label.replace(workspaceRootPath, '.');
+			element.tooltip = label;
+			ptxGeneralConfigProvider.refresh([element]);
+			// TODO check if current platform still correct
+			// TODO: run ptxdist platform command
+			quickPick.hide();
+		});
+		quickPick.onDidHide(() => quickPick.dispose());
+		quickPick.show();
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectToolchain', async (element: PtxGenConfig) => {
+		const findResult = await findDirs('/opt/', '*arm-linux-gnueabihf/bin');
+		console.log(findResult);
+		
+		const items = findResult.map(label => ({ label }));
+		const quickPick = vscode.window.createQuickPick();
+		quickPick.items = items;
+		quickPick.onDidChangeSelection(([{ label }]) => {
+			vscode.window.showInformationMessage(`Selected: ${label}`);
+			element.description = label.replace(workspaceRootPath, '.');
+			element.tooltip = label;
+			ptxGeneralConfigProvider.refresh([element]);
+			// TODO check if current platform still correct
+			// TODO: run ptxdist platform command
+			quickPick.hide();
+		});
+		quickPick.onDidHide(() => quickPick.dispose());
+		quickPick.show();
+	}));
 
 	
 }

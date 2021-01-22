@@ -30,9 +30,15 @@ class PtxGeneralConfigProvider {
     }
     getCmds(parentCmdId) {
         const rootCmds = [
-            new PtxGenConfig("Current platform :", "-", "Shows the currently selected platform based on the selected menu- and platformconfig", "currPlatform", vscode.TreeItemCollapsibleState.None),
+            /*new PtxGenConfig(
+                "Current platform :",
+                "-",
+                "Shows the currently selected platform based on the selected menu- and platformconfig",
+                "currPlatform",
+                vscode.TreeItemCollapsibleState.None),*/
             new PtxGenConfig("Current menuconfig :", "-", "", "selMenuConfig", vscode.TreeItemCollapsibleState.None, "vscode-ptxdist.selectPtxConfig"),
-            new PtxGenConfig("Current platformconfig :", "-", "", "selPlatformConfig", vscode.TreeItemCollapsibleState.None)
+            new PtxGenConfig("Current platformconfig :", "-", "", "selPlatformConfig", vscode.TreeItemCollapsibleState.None, "vscode-ptxdist.selectPlatformConfig"),
+            new PtxGenConfig("Current toolchain :", "-", "", "selToolchain", vscode.TreeItemCollapsibleState.None, "vscode-ptxdist.selectToolchain")
         ];
         return rootCmds;
     }
