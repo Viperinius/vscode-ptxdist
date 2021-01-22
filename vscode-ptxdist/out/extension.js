@@ -10,14 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 const ptxCommands_1 = require("./ptxCommands");
 const ptxGeneralConfig_1 = require("./ptxGeneralConfig");
 const execShell_1 = require("./util/execShell");
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+const fsInteraction_1 = require("./util/fsInteraction");
 function activate(context) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
@@ -31,16 +28,16 @@ function activate(context) {
             workspaceRootPath = vscode.workspace.rootPath;
         }
     }
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('vscode-ptxdist.helloWorld', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
+    // register tree views
+    const ptxGeneralConfigProvider = new ptxGeneralConfig_1.PtxGeneralConfigProvider(workspaceRootPath);
+    const ptxCommandsProvider = new ptxCommands_1.PtxCommandsProvider();
+    vscode.window.registerTreeDataProvider('ptxdist-general-config', ptxGeneralConfigProvider);
+    vscode.window.registerTreeDataProvider('ptxdist-commands', ptxCommandsProvider);
+    // register commands
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.helloWorld', () => {
         vscode.window.showInformationMessage('Hello World there from vscode-ptxdist!');
-    });
-    context.subscriptions.push(disposable);
-    disposable = vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', () => __awaiter(this, void 0, void 0, function* () {
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', () => __awaiter(this, void 0, void 0, function* () {
         let cmd = '';
         if (workspaceRootPath !== '') {
             cmd = 'dir "' + workspaceRootPath + '"';
@@ -51,49 +48,25 @@ function activate(context) {
             console.log('---');
             console.log(results.stdErr);
         }
-    }));
-    context.subscriptions.push(disposable);
-    disposable = vscode.commands.registerCommand('vscode-ptxdist.selectPtxConfig', () => __awaiter(this, void 0, void 0, function* () {
-        let cmd = '';
-        if (workspaceRootPath !== '') {
-            cmd = 'where /R ' + workspaceRootPath + ' *ptxconfig*';
-        }
-        if (cmd !== '') {
-            const results = yield execShell_1.exec(cmd);
-            console.log(results.stdOut);
-            console.log('---');
-            console.log(results.stdErr);
-            function showQuickPick() {
-                return __awaiter(this, void 0, void 0, function* () {
-                    let i = 0;
-                    const result = yield vscode.window.showQuickPick(['configs/platform-A/ptxconfig', 'configs/platf/ptxconfig', 'configs/platf/ptxconfig-b'], {
-                        placeHolder: 'Choose a ptxconfig',
-                        onDidSelectItem: item => vscode.window.showInformationMessage(`Focus ${++i}: ${item}`)
-                    });
-                    vscode.window.showInformationMessage(`Got: ${result}`);
-                });
-            }
-            const quickPick = vscode.window.createQuickPick();
-            // still with dummy items
-            const options = {
-                showQuickPick
-            };
-            quickPick.items = Object.keys(options).map(label => ({ label }));
-            quickPick.onDidChangeSelection(selection => {
-                if (selection[0]) {
-                    options[selection[0].label](context).catch(console.error);
-                }
-            });
-            quickPick.onDidHide(() => quickPick.dispose());
-            quickPick.show();
-        }
-    }));
-    context.subscriptions.push(disposable);
-    vscode.window.registerTreeDataProvider('ptxdist-general-config', new ptxGeneralConfig_1.PtxGeneralConfigProvider(workspaceRootPath));
-    vscode.window.registerTreeDataProvider('ptxdist-commands', new ptxCommands_1.PtxCommandsProvider());
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPtxConfig', (element) => __awaiter(this, void 0, void 0, function* () {
+        const findResult = yield fsInteraction_1.findFiles(workspaceRootPath, '*ptxconfig*');
+        console.log(findResult);
+        const items = findResult.map(label => ({ label }));
+        const quickPick = vscode.window.createQuickPick();
+        quickPick.items = items;
+        quickPick.onDidChangeSelection(([{ label }]) => {
+            vscode.window.showInformationMessage(`Selected: ${label}`);
+            element.description = label.replace(workspaceRootPath, '.');
+            element.tooltip = label;
+            ptxGeneralConfigProvider.refresh([element]);
+            quickPick.hide();
+        });
+        quickPick.onDidHide(() => quickPick.dispose());
+        quickPick.show();
+    })));
 }
 exports.activate = activate;
-// this method is called when your extension is deactivated
 function deactivate() { }
 exports.deactivate = deactivate;
 //# sourceMappingURL=extension.js.map

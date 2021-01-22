@@ -1,14 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PtxGeneralConfigProvider = void 0;
+exports.PtxGenConfig = exports.PtxGeneralConfigProvider = void 0;
 const vscode = require("vscode");
 const path = require("path");
 class PtxGeneralConfigProvider {
     constructor(workspaceRoot) {
         this.workspaceRoot = workspaceRoot;
+        this._onDidChangeTreeData = new vscode.EventEmitter();
+        this.onDidChangeTreeData = this._onDidChangeTreeData.event;
         if (this.workspaceRoot === '') {
             this.workspaceRoot = undefined;
         }
+    }
+    refresh(elementsToModify) {
+        elementsToModify.forEach(element => {
+            this._onDidChangeTreeData.fire(element);
+        });
     }
     getTreeItem(element) {
         return element;
@@ -23,25 +30,37 @@ class PtxGeneralConfigProvider {
     }
     getCmds(parentCmdId) {
         const rootCmds = [
-            new PtxGenConfig("Current menuconfig :", "-", "selMenuConfig", vscode.TreeItemCollapsibleState.None),
-            new PtxGenConfig("Current platformconfig :", "-", "selPlatformConfig", vscode.TreeItemCollapsibleState.None)
+            new PtxGenConfig("Current platform :", "-", "Shows the currently selected platform based on the selected menu- and platformconfig", "currPlatform", vscode.TreeItemCollapsibleState.None),
+            new PtxGenConfig("Current menuconfig :", "-", "", "selMenuConfig", vscode.TreeItemCollapsibleState.None, "vscode-ptxdist.selectPtxConfig"),
+            new PtxGenConfig("Current platformconfig :", "-", "", "selPlatformConfig", vscode.TreeItemCollapsibleState.None)
         ];
         return rootCmds;
     }
 }
 exports.PtxGeneralConfigProvider = PtxGeneralConfigProvider;
 class PtxGenConfig extends vscode.TreeItem {
-    constructor(label, desc, cmdId, collapsibleState, iconNameNoExt, contextVal) {
+    constructor(label, desc, tooltip, cmdId, collapsibleState, clickCmd, iconNameNoExt, contextVal) {
         super(label, collapsibleState);
         this.label = label;
         this.desc = desc;
+        this.tooltip = tooltip;
         this.cmdId = cmdId;
         this.collapsibleState = collapsibleState;
+        this.clickCmd = clickCmd;
         this.iconNameNoExt = iconNameNoExt;
         this.contextVal = contextVal;
-        this.tooltip = `${this.desc}`;
+        if (this.tooltip === '') {
+            this.tooltip = this.desc;
+        }
         this.description = this.desc;
         this.contextValue = this.contextVal;
+        if (this.clickCmd) {
+            this.command = {
+                "title": "",
+                "command": this.clickCmd,
+                "arguments": [this]
+            };
+        }
         if (iconNameNoExt) {
             this.iconPath = {
                 light: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'light', this.iconNameNoExt + '.svg'),
@@ -53,4 +72,5 @@ class PtxGenConfig extends vscode.TreeItem {
         return this.cmdId;
     }
 }
+exports.PtxGenConfig = PtxGenConfig;
 //# sourceMappingURL=ptxGeneralConfig.js.map
