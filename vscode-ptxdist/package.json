@@ -17,6 +17,8 @@
 		"onCommand:vscode-ptxdist.selectPlatformConfig",
 		"onCommand:vscode-ptxdist.selectToolchain",
 		"onCommand:vscode-ptxdist.ptxcmd-addPreset",
+		"onCommand:vscode-ptxdist.ptxcmd-cleanAll",
+		"onCommand:vscode-ptxdist.ptxcmd-cleanPkgs",
 		"onView:ptxdist-commands"
 	],
 	"main": "./out/extension.js",
@@ -45,6 +47,14 @@
 			{
 				"command": "vscode-ptxdist.ptxcmd-addPreset",
 				"title": "Add a preset for this command"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-cleanAll",
+				"title": "Clean all packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-cleanPkgs",
+				"title": "Clean given packages"
 			}
 		],
 		"menus": {

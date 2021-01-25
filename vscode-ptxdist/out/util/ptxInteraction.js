@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ptxdistToolchain = exports.ptxdistPlatform = exports.ptxdistSelect = void 0;
+exports.ptxdistClean = exports.ptxdistToolchain = exports.ptxdistPlatform = exports.ptxdistSelect = void 0;
 const execShell_1 = require("./execShell");
 const fsInteraction_1 = require("./fsInteraction");
+const terminalInteraction_1 = require("./terminalInteraction");
 function ptxdistSelect(workspaceRootPath, pathToMenuConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         if (fsInteraction_1.currentOsPlatform !== fsInteraction_1.OsPlatform.linux) {
@@ -75,4 +76,27 @@ function ptxdistToolchain(workspaceRootPath, pathToToolchainBin) {
     });
 }
 exports.ptxdistToolchain = ptxdistToolchain;
+function ptxdistClean(workspaceRootPath, all, packages) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (fsInteraction_1.currentOsPlatform !== fsInteraction_1.OsPlatform.linux) {
+            return;
+        }
+        let cmd = '';
+        if (workspaceRootPath.includes('ptxproj')) {
+            cmd += 'cd ' + workspaceRootPath + ' && ';
+        }
+        else {
+            cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
+        }
+        cmd += 'yes | ptxdist clean ';
+        if (!all) {
+            if (packages === undefined || packages.length === 0) {
+                return;
+            }
+            cmd += packages.join(' ');
+        }
+        terminalInteraction_1.runInTerminal('PTXdist', cmd, true);
+    });
+}
+exports.ptxdistClean = ptxdistClean;
 //# sourceMappingURL=ptxInteraction.js.map

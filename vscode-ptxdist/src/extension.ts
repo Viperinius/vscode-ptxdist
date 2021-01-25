@@ -125,9 +125,26 @@ export function activate(context: vscode.ExtensionContext) {
 		quickPick.show();
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', () => {
-		console.log(vscode.window.terminals);
-		runInTerminal('PTXdist', 'echo "Hello"', true);
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', async () => {
+		
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanAll', async () => {
+		const response = await vscode.window.showWarningMessage("Do you really want to clean all packages?", 'Yes', 'No');
+    	if (response === 'Yes') {
+			ptxInteraction.ptxdistClean(workspaceRootPath, true);
+		}
+	}));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanPkgs', async () => {
+		const options = {
+			ignoreFocusOut: true,
+			prompt: 'Fill in one or more package names to clean. (Multiple packages are separated with a space)'
+		};
+		const inputResponse = await vscode.window.showInputBox(options);
+		if (inputResponse === undefined || inputResponse === '') {
+			return;
+		}
+		ptxInteraction.ptxdistClean(workspaceRootPath, false, inputResponse.split(' '));		
 	}));
 	
 }

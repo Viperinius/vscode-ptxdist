@@ -28,8 +28,21 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
         ];
         const children: Record<string, PtxCommand[]> = {
             "clean": [
-                new PtxCommand("All", "Cleans all packages", "cleanAll", vscode.TreeItemCollapsibleState.None, "run-all"),
-                new PtxCommand("Specified package(s)", "Cleans only some packages", "cleanSpecific", vscode.TreeItemCollapsibleState.None, "run", 'isCmdWithPreset')
+                new PtxCommand(
+                    "All", 
+                    "Cleans all packages", 
+                    "cleanAll", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run-all", 
+                    "vscode-ptxdist.ptxcmd-cleanAll"),
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Cleans only some packages", 
+                    "cleanSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run", 
+                    "vscode-ptxdist.ptxcmd-cleanPkgs",
+                    "isCmdWithPreset")
             ],
             "go": [
                 new PtxCommand("Default", "Runs in parallel und quiet mode", "goDefault", vscode.TreeItemCollapsibleState.None, "run-all"),
@@ -55,12 +68,20 @@ class PtxCommand extends vscode.TreeItem {
         private readonly cmdId: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         private iconNameNoExt: string,
+        public clickCmd?: string,
         private contextVal?: string
     ) {
         super(label, collapsibleState);
         this.tooltip = `${this.label}: ${this.desc}`;
         this.description = this.desc;
         this.contextValue = this.contextVal;
+        if (this.clickCmd) {
+            this.command = {
+                "title": "",
+                "command": this.clickCmd,
+                "arguments": [this]
+            };
+        }
     }
 
     iconPath = {

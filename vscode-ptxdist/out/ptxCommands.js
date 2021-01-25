@@ -23,8 +23,8 @@ class PtxCommandsProvider {
         ];
         const children = {
             "clean": [
-                new PtxCommand("All", "Cleans all packages", "cleanAll", vscode.TreeItemCollapsibleState.None, "run-all"),
-                new PtxCommand("Specified package(s)", "Cleans only some packages", "cleanSpecific", vscode.TreeItemCollapsibleState.None, "run", 'isCmdWithPreset')
+                new PtxCommand("All", "Cleans all packages", "cleanAll", vscode.TreeItemCollapsibleState.None, "run-all", "vscode-ptxdist.ptxcmd-cleanAll"),
+                new PtxCommand("Specified package(s)", "Cleans only some packages", "cleanSpecific", vscode.TreeItemCollapsibleState.None, "run", "vscode-ptxdist.ptxcmd-cleanPkgs", "isCmdWithPreset")
             ],
             "go": [
                 new PtxCommand("Default", "Runs in parallel und quiet mode", "goDefault", vscode.TreeItemCollapsibleState.None, "run-all"),
@@ -43,13 +43,14 @@ class PtxCommandsProvider {
 }
 exports.PtxCommandsProvider = PtxCommandsProvider;
 class PtxCommand extends vscode.TreeItem {
-    constructor(label, desc, cmdId, collapsibleState, iconNameNoExt, contextVal) {
+    constructor(label, desc, cmdId, collapsibleState, iconNameNoExt, clickCmd, contextVal) {
         super(label, collapsibleState);
         this.label = label;
         this.desc = desc;
         this.cmdId = cmdId;
         this.collapsibleState = collapsibleState;
         this.iconNameNoExt = iconNameNoExt;
+        this.clickCmd = clickCmd;
         this.contextVal = contextVal;
         this.iconPath = {
             light: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'light', this.iconNameNoExt + '.svg'),
@@ -58,6 +59,13 @@ class PtxCommand extends vscode.TreeItem {
         this.tooltip = `${this.label}: ${this.desc}`;
         this.description = this.desc;
         this.contextValue = this.contextVal;
+        if (this.clickCmd) {
+            this.command = {
+                "title": "",
+                "command": this.clickCmd,
+                "arguments": [this]
+            };
+        }
     }
     getCmdId() {
         return this.cmdId;

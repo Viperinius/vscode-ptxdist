@@ -16,7 +16,6 @@ const ptxGeneralConfig_1 = require("./ptxGeneralConfig");
 const execShell_1 = require("./util/execShell");
 const fsInteraction_1 = require("./util/fsInteraction");
 const ptxInteraction = require("./util/ptxInteraction");
-const terminalInteraction_1 = require("./util/terminalInteraction");
 function activate(context) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
@@ -122,10 +121,25 @@ function activate(context) {
         quickPick.onDidHide(() => quickPick.dispose());
         quickPick.show();
     })));
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', () => {
-        console.log(vscode.window.terminals);
-        terminalInteraction_1.runInTerminal('PTXdist', 'echo "Hello"', true);
-    }));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', () => __awaiter(this, void 0, void 0, function* () {
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanAll', () => __awaiter(this, void 0, void 0, function* () {
+        const response = yield vscode.window.showWarningMessage("Do you really want to clean all packages?", 'Yes', 'No');
+        if (response === 'Yes') {
+            ptxInteraction.ptxdistClean(workspaceRootPath, true);
+        }
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanPkgs', () => __awaiter(this, void 0, void 0, function* () {
+        const options = {
+            ignoreFocusOut: true,
+            prompt: 'Fill in one or more package names to clean. (Multiple packages are separated with a space)'
+        };
+        const inputResponse = yield vscode.window.showInputBox(options);
+        if (inputResponse === undefined || inputResponse === '') {
+            return;
+        }
+        ptxInteraction.ptxdistClean(workspaceRootPath, false, inputResponse.split(' '));
+    })));
 }
 exports.activate = activate;
 function deactivate() { }
