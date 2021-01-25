@@ -4,6 +4,7 @@ import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { exec } from './util/execShell';
 import { findDirs, findFiles } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
+import { runInTerminal } from './util/terminalInteraction';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -124,6 +125,10 @@ export function activate(context: vscode.ExtensionContext) {
 		quickPick.show();
 	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', () => {
+		console.log(vscode.window.terminals);
+		runInTerminal('PTXdist', 'echo "Hello"', true);
+	}));
 	
 }
 

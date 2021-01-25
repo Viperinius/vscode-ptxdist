@@ -26,6 +26,12 @@ var OsPlatform;
     OsPlatform["cygwin"] = "cygwin";
     OsPlatform["netBsd"] = "netbsd";
 })(OsPlatform = exports.OsPlatform || (exports.OsPlatform = {}));
+/**
+ * Execute a find/search on the filesystem
+ * @param searchPath path in which the search starts
+ * @param searchPattern what to look for, either file name, directory name or a pattern
+ * @param type 'd' for directory or 'f' for file, defaults to 'b' for both if not supplied
+ */
 function find(searchPath, searchPattern, type) {
     return __awaiter(this, void 0, void 0, function* () {
         let cmd = '';
@@ -39,9 +45,10 @@ function find(searchPath, searchPattern, type) {
                 if (type && (type === 'f' || type === 'd')) {
                     findType = '-type ' + type;
                 }
-                cmd = 'find ' + searchPath + ' ' + findType + " -name '" + searchPattern + "' -exec realpath {} \;";
+                cmd = 'find ' + searchPath + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
             }
         }
+        console.log(cmd);
         if (cmd !== '') {
             const shellResult = yield execShell_1.exec(cmd);
             //console.log(shellResult.stdOut.trim());
@@ -54,18 +61,33 @@ function find(searchPath, searchPattern, type) {
         return results;
     });
 }
+/**
+ * Search for files on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either file name or a pattern
+ */
 function findFiles(searchPath, namePattern) {
     return __awaiter(this, void 0, void 0, function* () {
         return find(searchPath, namePattern, 'f');
     });
 }
 exports.findFiles = findFiles;
+/**
+ * Search for directories on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either directory name or a pattern
+ */
 function findDirs(searchPath, namePattern) {
     return __awaiter(this, void 0, void 0, function* () {
         return find(searchPath, namePattern, 'd');
     });
 }
 exports.findDirs = findDirs;
+/**
+ * Search for files and directories on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either file name, directory name or a pattern
+ */
 function findDirsFiles(searchPath, namePattern) {
     return __awaiter(this, void 0, void 0, function* () {
         return find(searchPath, namePattern);
