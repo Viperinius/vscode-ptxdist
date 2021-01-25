@@ -3,6 +3,7 @@ import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { exec } from './util/execShell';
 import { findDirs, findFiles } from './util/fsInteraction';
+import * as ptxInteraction from './util/ptxInteraction';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -19,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 			workspaceRootPath = vscode.workspace.rootPath;
 		}
 	}
+	console.log(workspaceRootPath);
 
 	// register tree views
 
@@ -48,18 +50,24 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPtxConfig', async (element: PtxGenConfig) => {
 		const findResult = await findFiles(workspaceRootPath, '*ptxconfig*');
-		console.log(findResult);
+		const filteredResults = findResult.filter(name => name.includes('configs'));
+		console.log(filteredResults);
 		
-		const items = findResult.map(label => ({ label }));
+		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.') }));
 		const quickPick = vscode.window.createQuickPick();
 		quickPick.items = items;
 		quickPick.onDidChangeSelection(([{ label }]) => {
-			vscode.window.showInformationMessage(`Selected: ${label}`);
-			element.description = label.replace(workspaceRootPath, '.');
-			element.tooltip = label;
-			ptxGeneralConfigProvider.refresh([element]);
-			// TODO check if current platform still correct
-			// TODO: run ptxdist select command
+			const shellResult = ptxInteraction.ptxdistSelect(workspaceRootPath, label);
+			if (!shellResult) {
+				vscode.window.showErrorMessage(`Could not set ${label} as menuconfig`);
+			}
+			else {
+				vscode.window.showInformationMessage(`Selected: ${label}`);
+				element.description = label.replace(workspaceRootPath, '.');
+				element.tooltip = label;
+				ptxGeneralConfigProvider.refresh([element]);
+				// TODO check if current platform still correct
+			}			
 			quickPick.hide();
 		});
 		quickPick.onDidHide(() => quickPick.dispose());
@@ -68,18 +76,24 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPlatformConfig', async (element: PtxGenConfig) => {
 		const findResult = await findFiles(workspaceRootPath, '*platformconfig*');
-		console.log(findResult);
+		const filteredResults = findResult.filter(name => name.includes('configs'));
+		console.log(filteredResults);
 		
-		const items = findResult.map(label => ({ label }));
+		const items = filteredResults.map(label => ({ label }));
 		const quickPick = vscode.window.createQuickPick();
 		quickPick.items = items;
 		quickPick.onDidChangeSelection(([{ label }]) => {
-			vscode.window.showInformationMessage(`Selected: ${label}`);
-			element.description = label.replace(workspaceRootPath, '.');
-			element.tooltip = label;
-			ptxGeneralConfigProvider.refresh([element]);
-			// TODO check if current platform still correct
-			// TODO: run ptxdist platform command
+			const shellResult = ptxInteraction.ptxdistPlatform(workspaceRootPath, label);
+			if (!shellResult) {
+				vscode.window.showErrorMessage(`Could not set ${label} as platformconfig`);
+			}
+			else {
+				vscode.window.showInformationMessage(`Selected: ${label}`);
+				element.description = label.replace(workspaceRootPath, '.');
+				element.tooltip = label;
+				ptxGeneralConfigProvider.refresh([element]);
+				// TODO check if current platform still correct
+			}
 			quickPick.hide();
 		});
 		quickPick.onDidHide(() => quickPick.dispose());
@@ -88,18 +102,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectToolchain', async (element: PtxGenConfig) => {
 		const findResult = await findDirs('/opt/', '*arm-linux-gnueabihf/bin');
-		console.log(findResult);
 		
 		const items = findResult.map(label => ({ label }));
 		const quickPick = vscode.window.createQuickPick();
 		quickPick.items = items;
 		quickPick.onDidChangeSelection(([{ label }]) => {
-			vscode.window.showInformationMessage(`Selected: ${label}`);
-			element.description = label.replace(workspaceRootPath, '.');
-			element.tooltip = label;
-			ptxGeneralConfigProvider.refresh([element]);
-			// TODO check if current platform still correct
-			// TODO: run ptxdist platform command
+			const shellResult = ptxInteraction.ptxdistToolchain(workspaceRootPath, label);
+			if (!shellResult) {
+				vscode.window.showErrorMessage(`Could not set ${label} as toolchain`);
+			}
+			else {
+				vscode.window.showInformationMessage(`Selected: ${label}`);
+				element.description = label.replace(workspaceRootPath, '.');
+				element.tooltip = label;
+				ptxGeneralConfigProvider.refresh([element]);
+				// TODO check if current platform still correct
+			}
 			quickPick.hide();
 		});
 		quickPick.onDidHide(() => quickPick.dispose());

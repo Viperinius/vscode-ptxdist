@@ -17,6 +17,12 @@ export enum OsPlatform {
     netBsd = 'netbsd'
 }
 
+/**
+ * Execute a find/search on the filesystem
+ * @param searchPath path in which the search starts
+ * @param searchPattern what to look for, either file name, directory name or a pattern
+ * @param type 'd' for directory or 'f' for file, defaults to 'b' for both if not supplied
+ */
 async function find(searchPath: string, searchPattern: string, type?: string): Promise<string[]> {
     let cmd: string = '';
     let results: string[] = [];
@@ -29,9 +35,10 @@ async function find(searchPath: string, searchPattern: string, type?: string): P
             if (type && (type === 'f' || type === 'd')) {
                 findType = '-type ' + type;
             }
-            cmd = 'find ' + searchPath + ' ' + findType + " -name '" + searchPattern + "' -exec realpath {} \;";
+            cmd = 'find ' + searchPath + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
         }
     }
+    console.log(cmd);
     if (cmd !== '') {
         const shellResult = await exec(cmd);
         //console.log(shellResult.stdOut.trim());
@@ -47,14 +54,29 @@ async function find(searchPath: string, searchPattern: string, type?: string): P
     return results;
 }
 
+/**
+ * Search for files on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either file name or a pattern
+ */
 export async function findFiles(searchPath: string, namePattern: string): Promise<string[]> {
     return find(searchPath, namePattern, 'f');
 }
 
+/**
+ * Search for directories on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either directory name or a pattern
+ */
 export async function findDirs(searchPath: string, namePattern: string): Promise<string[]> {
     return find(searchPath, namePattern, 'd');
 }
 
+/**
+ * Search for files and directories on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either file name, directory name or a pattern
+ */
 export async function findDirsFiles(searchPath: string, namePattern: string): Promise<string[]> {
     return find(searchPath, namePattern);
 }
