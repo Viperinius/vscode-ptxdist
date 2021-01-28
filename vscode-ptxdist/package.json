@@ -23,6 +23,44 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"configuration":[
+			{
+				"title": "PTXdist",
+				"properties": {
+					"vscode-ptxdist.current.menuconfig": {
+						"description": "Currently selected menuconfig",
+						"default": "",
+						"type": "string"
+					},
+					"vscode-ptxdist.current.platformconfig": {
+						"description": "Currently selected platformconfig",
+						"default": "",
+						"type": "string"
+					},
+					"vscode-ptxdist.current.toolchain": {
+						"description": "Currently selected toolchain",
+						"default": "",
+						"type": "string"
+					},
+					"vscode-ptxdist.presets.favouritePackages": {
+						"description": "List of saved / favourited packages",
+						"default": [],
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"vscode-ptxdist.presets.favouriteCommands": {
+						"description": "List of saved / favourited full PTXdist commands",
+						"default": [],
+						"items": {
+							"type": "object"
+						},
+						"type": "array"
+					}
+				}
+			}
+		],
 		"commands": [
 			{
 				"command": "vscode-ptxdist.helloWorld",
