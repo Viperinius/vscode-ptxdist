@@ -13,6 +13,7 @@ exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const ptxCommands_1 = require("./ptxCommands");
 const ptxGeneralConfig_1 = require("./ptxGeneralConfig");
+const quickSelects_1 = require("./quickSelects");
 const execShell_1 = require("./util/execShell");
 const fsInteraction_1 = require("./util/fsInteraction");
 const ptxInteraction = require("./util/ptxInteraction");
@@ -130,15 +131,11 @@ function activate(context) {
         }
     })));
     context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanPkgs', () => __awaiter(this, void 0, void 0, function* () {
-        const options = {
-            ignoreFocusOut: true,
-            prompt: 'Fill in one or more package names to clean. (Multiple packages are separated with a space)'
-        };
-        const inputResponse = yield vscode.window.showInputBox(options);
-        if (inputResponse === undefined || inputResponse === '') {
+        const packages = yield quickSelects_1.createQuickPickForConfig("vscode-ptxdist.presets.favouritePackages");
+        if (!(packages === null || packages === void 0 ? void 0 : packages.length)) {
             return;
         }
-        ptxInteraction.ptxdistClean(workspaceRootPath, false, inputResponse.split(' '));
+        ptxInteraction.ptxdistClean(workspaceRootPath, false, packages);
     })));
 }
 exports.activate = activate;

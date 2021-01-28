@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
+import { createQuickPickForConfig } from './quickSelects';
 import { exec } from './util/execShell';
 import { findDirs, findFiles } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
@@ -136,15 +137,11 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanPkgs', async () => {
-		const options = {
-			ignoreFocusOut: true,
-			prompt: 'Fill in one or more package names to clean. (Multiple packages are separated with a space)'
-		};
-		const inputResponse = await vscode.window.showInputBox(options);
-		if (inputResponse === undefined || inputResponse === '') {
+		const packages = await createQuickPickForConfig("vscode-ptxdist.presets.favouritePackages");
+		if (!packages?.length) {
 			return;
 		}
-		ptxInteraction.ptxdistClean(workspaceRootPath, false, inputResponse.split(' '));		
+		ptxInteraction.ptxdistClean(workspaceRootPath, false, packages);		
 	}));
 	
 }
