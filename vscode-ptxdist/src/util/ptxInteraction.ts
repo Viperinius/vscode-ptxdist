@@ -1,8 +1,27 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { exec } from './execShell';
-import { currentOsPlatform, OsPlatform } from './fsInteraction';
+import { currentOsPlatform, findLinks, OsPlatform } from './fsInteraction';
 import { runInTerminal } from './terminalInteraction';
+
+export async function ptxdistGetSelected(workspaceRootPath: string, selectedLinkName: string): Promise<string[]> {
+    if (currentOsPlatform !== OsPlatform.linux || !workspaceRootPath.includes('ptxproj')) {
+        return [];
+    }
+    return findLinks(workspaceRootPath, '*' + selectedLinkName + '*', 1);
+}
+
+export async function ptxdistGetSelectedConfig(workspaceRootPath: string) {
+    return ptxdistGetSelected(workspaceRootPath, 'selected_ptxconfig');
+}
+
+export async function ptxdistGetSelectedPlatform(workspaceRootPath: string) {
+    return ptxdistGetSelected(workspaceRootPath, 'selected_platformconfig');
+}
+
+export async function ptxdistGetSelectedToolchain(workspaceRootPath: string) {
+    return ptxdistGetSelected(workspaceRootPath, 'selected_toolchain');
+}
 
 export async function ptxdistSelect(workspaceRootPath: string, pathToMenuConfig: string): Promise<boolean> {
     if (currentOsPlatform !== OsPlatform.linux) {

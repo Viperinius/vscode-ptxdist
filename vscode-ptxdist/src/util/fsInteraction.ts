@@ -22,8 +22,9 @@ export enum OsPlatform {
  * @param searchPath path in which the search starts
  * @param searchPattern what to look for, either file name, directory name or a pattern
  * @param type 'd' for directory or 'f' for file, defaults to 'b' for both if not supplied
+ * @param depth maximum depth to use, defaults to 'none'
  */
-async function find(searchPath: string, searchPattern: string, type?: string): Promise<string[]> {
+async function find(searchPath: string, searchPattern: string, type?: string, depth?: number): Promise<string[]> {
     let cmd: string = '';
     let results: string[] = [];
     if (searchPath !== '' && searchPattern !== '') {
@@ -32,10 +33,14 @@ async function find(searchPath: string, searchPattern: string, type?: string): P
         }
         else if (currentOsPlatform === OsPlatform.linux) {
             let findType: string = '';
-            if (type && (type === 'f' || type === 'd')) {
+            let maxDepth: string = '';
+            if (type && (type === 'f' || type === 'd' || type === 'l')) {
                 findType = '-type ' + type;
+            }            
+            if (depth && depth > 0) {
+                maxDepth = '-maxdepth ' + depth
             }
-            cmd = 'find ' + searchPath + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
+            cmd = 'find ' + searchPath + ' ' + maxDepth + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
         }
     }
     console.log(cmd);
@@ -58,18 +63,30 @@ async function find(searchPath: string, searchPattern: string, type?: string): P
  * Search for files on the filesystem
  * @param searchPath path in which the search starts
  * @param namePattern what to look for, either file name or a pattern
+ * @param depth maximum search depth
  */
-export async function findFiles(searchPath: string, namePattern: string): Promise<string[]> {
-    return find(searchPath, namePattern, 'f');
+export async function findFiles(searchPath: string, namePattern: string, depth?: number): Promise<string[]> {
+    return find(searchPath, namePattern, 'f', depth);
+}
+
+/**
+ * Search for links on the filesystem
+ * @param searchPath path in which the search starts
+ * @param namePattern what to look for, either link name or a pattern
+ * @param depth maximum search depth
+ */
+export async function findLinks(searchPath: string, namePattern: string, depth?: number): Promise<string[]> {
+    return find(searchPath, namePattern, 'l', depth);
 }
 
 /**
  * Search for directories on the filesystem
  * @param searchPath path in which the search starts
  * @param namePattern what to look for, either directory name or a pattern
+ * @param depth maximum search depth
  */
-export async function findDirs(searchPath: string, namePattern: string): Promise<string[]> {
-    return find(searchPath, namePattern, 'd');
+export async function findDirs(searchPath: string, namePattern: string, depth?: number): Promise<string[]> {
+    return find(searchPath, namePattern, 'd', depth);
 }
 
 /**

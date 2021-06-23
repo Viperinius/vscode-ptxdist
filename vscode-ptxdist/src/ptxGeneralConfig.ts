@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { ptxdistGetSelectedConfig, ptxdistGetSelectedPlatform, ptxdistGetSelectedToolchain } from './util/ptxInteraction';
 
 export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenConfig> {
     constructor(private workspaceRoot?: string) {
@@ -23,18 +24,35 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
 
     getChildren(element?: PtxGenConfig): Thenable<PtxGenConfig[]> {
         if (element) {
-            return Promise.resolve(
-                this.getCmds(element.getCmdId())
-            );
+            return this.getCmds(element.getCmdId());
         }
         else {
-            return Promise.resolve(
-                this.getCmds()
-            );
+            return this.getCmds();
         }
     }
 
-    private getCmds(parentCmdId?: string): PtxGenConfig[] {
+    private async getCmds(parentCmdId?: string): Promise<PtxGenConfig[]> {
+        console.log('test')
+        let descMenuconfig = '-';
+        let descPlatformconfig = '-';
+        let descToolchain = '-';
+        let ws = '';
+        if (this.workspaceRoot && this.workspaceRoot !== '') {
+            ws = this.workspaceRoot;
+            const selectedPtxconfig = await ptxdistGetSelectedConfig(this.workspaceRoot);
+            const selectedPlatformconfig = await ptxdistGetSelectedPlatform(this.workspaceRoot);
+            const selectedToolchain = await ptxdistGetSelectedToolchain(this.workspaceRoot);
+            console.log(selectedPtxconfig);
+            if (selectedPtxconfig.length == 1) {
+                descMenuconfig = selectedPtxconfig[0];
+            }
+            if (selectedPlatformconfig.length == 1) {
+                descPlatformconfig = selectedPlatformconfig[0];
+            }
+            if (selectedToolchain.length == 1) {
+                descToolchain = selectedToolchain[0];
+            }
+        }
         const rootCmds = [
             /*new PtxGenConfig(
                 "Current platform :", 
@@ -44,22 +62,22 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 vscode.TreeItemCollapsibleState.None),*/
             new PtxGenConfig(
                 "Current menuconfig :", 
-                "-", 
-                "",
+                descMenuconfig.replace(ws, '.'), 
+                descMenuconfig,
                 "selMenuConfig", 
                 vscode.TreeItemCollapsibleState.None, 
                 "vscode-ptxdist.selectPtxConfig"),
             new PtxGenConfig(
                 "Current platformconfig :", 
-                "-", 
-                "",
+                descPlatformconfig.replace(ws, '.'), 
+                descPlatformconfig,
                 "selPlatformConfig", 
                 vscode.TreeItemCollapsibleState.None,
                 "vscode-ptxdist.selectPlatformConfig"),
             new PtxGenConfig(
                 "Current toolchain :", 
-                "-", 
-                "",
+                descToolchain, 
+                descToolchain,
                 "selToolchain", 
                 vscode.TreeItemCollapsibleState.None,
                 "vscode-ptxdist.selectToolchain")
