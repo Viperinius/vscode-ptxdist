@@ -10,7 +10,7 @@ class PackageItem implements vscode.QuickPickItem {
 	}
 }
 
-export async function createQuickPickForConfig(configEntry: string) {
+export async function createQuickPickForConfig(itemNames: string[]) {
 	const disposeables: vscode.Disposable[] = [];
 	//let tempSelectedItems: PackageItem[] = [];
 	try {
@@ -22,13 +22,11 @@ export async function createQuickPickForConfig(configEntry: string) {
 
 			// dont use "searching" (onDidChangeValue) for now
 			input.busy = true;
-			const config = vscode.workspace.getConfiguration();
-			const favPkgs = config.get(configEntry);
-			if (!favPkgs) {
+			if (!itemNames) {
 				input.items = [];
 				return;
 			}
-			(favPkgs as string[]).forEach(p => {
+			itemNames.forEach(p => {
 				if (!input.items.filter(i => i.label === p).length) {
 					input.items = input.items.concat([new PackageItem(p)]);
 				}
