@@ -128,7 +128,14 @@
 					"visibility": "collapsed"
 				}
 			]
+		},
+		"keybindings":[
+			{
+				"command": "workbench.action.tasks.terminate",
+				"key": "ctrl+alt+x",
+				"when": "taskRunning && terminalFocus"
 		}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
