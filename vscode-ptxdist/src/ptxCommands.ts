@@ -24,7 +24,15 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
     private getCmds(parentCmdId?: string): PtxCommand[] {
         const rootCmds = [
             new PtxCommand("Clean", "Run ptxdist clean", "clean", vscode.TreeItemCollapsibleState.Collapsed, "trash"),
-            new PtxCommand("Go", "Run ptxdist go", "go", vscode.TreeItemCollapsibleState.Collapsed, "build")
+            new PtxCommand("Go", "Run ptxdist go", "go", vscode.TreeItemCollapsibleState.Collapsed, "build"),
+            new PtxCommand("Targetinstall", "Run ptxdist targetinstall", "targetinstall", vscode.TreeItemCollapsibleState.Collapsed, "references"),
+            new PtxCommand("Install", "Run ptxdist install", "install", vscode.TreeItemCollapsibleState.Collapsed, "references"),
+            new PtxCommand("Compile", "Run ptxdist compile", "compile", vscode.TreeItemCollapsibleState.Collapsed, "build"),
+            new PtxCommand("Prepare", "Run ptxdist prepare", "prepare", vscode.TreeItemCollapsibleState.Collapsed, "settings"),
+            new PtxCommand("Extract", "Run ptxdist extract", "extract", vscode.TreeItemCollapsibleState.Collapsed, "unfold"),
+            new PtxCommand("URLcheck", "Run ptxdist urlcheck", "urlcheck", vscode.TreeItemCollapsibleState.Collapsed, "radio-tower"),
+            new PtxCommand("Get", "Run ptxdist get", "get", vscode.TreeItemCollapsibleState.Collapsed, "cloud-download"),
+            new PtxCommand("Images", "Run ptxdist images", "images", vscode.TreeItemCollapsibleState.Collapsed, "file-zip")
         ];
         const children: Record<string, PtxCommand[]> = {
             "clean": [
@@ -42,14 +50,125 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     vscode.TreeItemCollapsibleState.None, 
                     "run", 
                     "vscode-ptxdist.ptxcmd-cleanPkgs",
-                    "isCmdWithPreset")
+                    "isCmdWithPreset"),
+                new PtxCommand(
+                    "Distclean", 
+                    "Runs distclean to clean even more!", 
+                    "distclean", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run-all", 
+                    "vscode-ptxdist.ptxcmd-distclean")
             ],
             "go": [
-                new PtxCommand("Default", "Runs in parallel und quiet mode", "goDefault", vscode.TreeItemCollapsibleState.None, "run-all"),
-                new PtxCommand("No parallel", "Runs without -j but with -q", "goNoParallel", vscode.TreeItemCollapsibleState.None, "run"),
-                new PtxCommand("Gimme output", "Runs without -q but with -j", "goNoQuiet", vscode.TreeItemCollapsibleState.None, "run"),
-                new PtxCommand("Gimme slow output", "Runs without -j and -q", "goNoParallelNoQuiet", vscode.TreeItemCollapsibleState.None, "run-all")
-            ]
+                new PtxCommand(
+                    "All", 
+                    "Builds all packages", 
+                    "goAll", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run-all",
+                    "vscode-ptxdist.ptxcmd-goAll"),
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Builds only some packages", 
+                    "goSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-goPkgs",
+                    "isCmdWithPreset")
+            ],
+            "targetinstall": [
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Installs only some packages", 
+                    "targetinstallSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-targetinstallPkgs",
+                    "isCmdWithPreset")
+            ],
+            "install": [
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Installs only some packages", 
+                    "installSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-installPkgs",
+                    "isCmdWithPreset")
+            ],
+            "compile": [
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Compiles only some packages", 
+                    "compileSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-compilePkgs",
+                    "isCmdWithPreset")
+            ],
+            "prepare": [
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Prepares only some packages", 
+                    "prepareSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-preparePkgs",
+                    "isCmdWithPreset")
+            ],
+            "extract": [
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Extract only some packages", 
+                    "extractSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-extractPkgs",
+                    "isCmdWithPreset")
+            ],
+            "urlcheck": [
+                new PtxCommand(
+                    "All", 
+                    "Check URLs of all packages", 
+                    "urlcheckAll", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run-all",
+                    "vscode-ptxdist.ptxcmd-urlcheckAll"),
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Check URLs of only some packages", 
+                    "urlcheckSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-urlcheckPkgs",
+                    "isCmdWithPreset")
+            ],
+            "get": [
+                new PtxCommand(
+                    "All", 
+                    "Get all packages", 
+                    "getAll", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run-all",
+                    "vscode-ptxdist.ptxcmd-getAll"),
+                new PtxCommand(
+                    "Specified package(s)", 
+                    "Get only some packages", 
+                    "getSpecific", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-getPkgs",
+                    "isCmdWithPreset")
+            ],
+            "images": [
+                new PtxCommand(
+                    "All", 
+                    "Create all images", 
+                    "imagesAll", 
+                    vscode.TreeItemCollapsibleState.None, 
+                    "run",
+                    "vscode-ptxdist.ptxcmd-imagesAll")
+            ],
         };
         
         if (parentCmdId) {

@@ -2,8 +2,13 @@
 	"name": "vscode-ptxdist",
 	"displayName": "PTXdist",
 	"description": "",
+	"icon": "resources/ptxdist-icon.png",
 	"version": "0.0.1",
 	"publisher": "Viperinius",
+	"repository": {
+		"url": "https://github.com/Viperinius/vscode-ptxdist",
+		"type": "git"
+	},
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -11,6 +16,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:workbench.action.tasks.runTask",
 		"onCommand:vscode-ptxdist.helloWorld",
 		"onCommand:vscode-ptxdist.printWorkspaceRoot",
 		"onCommand:vscode-ptxdist.selectPtxConfig",
@@ -41,6 +47,12 @@
 						"description": "Currently selected toolchain",
 						"default": "",
 						"type": "string"
+					},
+					"vscode-ptxdist.workspaceRoot": {
+						"description": "The base path of the workspace. This is used to determine available configurations and where to execute PTXdist tasks. Generally, this setting should be set to the parent directory of some kind of 'ptxproj' folder. After this has been set, you should probably reload the window.",
+						"default": "",
+						"type":"string",
+						"scope": "window"
 					},
 					"vscode-ptxdist.presets.favouritePackages": {
 						"description": "List of saved / favourited packages",
@@ -93,6 +105,116 @@
 			{
 				"command": "vscode-ptxdist.ptxcmd-cleanPkgs",
 				"title": "Clean given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-distclean",
+				"title": "Clean everything that is not part of the main project"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-goAll",
+				"title": "Build all packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-goPkgs",
+				"title": "Build given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-targetinstallPkgs",
+				"title": "Install given packages into the root filesystem"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-installPkgs",
+				"title": "Install given packages locally"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-compilePkgs",
+				"title": "Compile given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-preparePkgs",
+				"title": "Prepare given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-extractPkgs",
+				"title": "Extract given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-urlcheckAll",
+				"title": "Check for working URLs of all packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-urlcheckPkgs",
+				"title": "Check for working URLs of given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-getAll",
+				"title": "Get all packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-getPkgs",
+				"title": "Get given packages"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-imagesAll",
+				"title": "Build all images"
+			}
+		],
+		"taskDefinitions": [
+			{
+				"type": "PTXdist",
+				"required": [
+					"name",
+					"id",
+					"commandType"
+				],
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Name of the task"
+					},
+					"id": {
+						"type": "string",
+						"description": "ID of the task used when searching for this task"
+					},
+					"commandType": {
+						"type": "string",
+						"description": "Which PTXdist command is targeted"
+					},
+					"flags": {
+						"type": "array",
+						"description": "Optional (string array of) flags to supply to the command"
+					},
+					"packages": {
+						"type": "array",
+						"description": "Optional (string array of) PTXdist package names to apply the command to"
+					}
+				}
+			},
+			{
+				"type": "PTXdist All",
+				"required": [
+					"name",
+					"id",
+					"commandType"
+				],
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Name of the task"
+					},
+					"id": {
+						"type": "string",
+						"description": "ID of the task used when searching for this task"
+					},
+					"commandType": {
+						"type": "string",
+						"description": "Which PTXdist command is targeted"
+					},
+					"flags": {
+						"type": "array",
+						"description": "Optional (string array of) flags to supply to the command"
+					}
+				}
 			}
 		],
 		"menus": {
@@ -134,7 +256,7 @@
 				"command": "workbench.action.tasks.terminate",
 				"key": "ctrl+alt+x",
 				"when": "taskRunning && terminalFocus"
-		}
+			}
 		]
 	},
 	"scripts": {

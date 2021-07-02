@@ -5,7 +5,7 @@
 import * as cp from 'child_process';
 import { CancellationToken, Disposable } from 'vscode';
 
-const BUFFER_SIZE = 10 * 1024;
+export const BUFFER_SIZE = 10 * 1024;
 
 export type Progress = (content: string, proc: cp.ChildProcess) => void;
 export type ExecError = Error & { code: any, sig: any, stdErrHandled: boolean };
