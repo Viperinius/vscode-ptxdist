@@ -32,17 +32,18 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
     }
 
     private async getCmds(parentCmdId?: string): Promise<PtxGenConfig[]> {
-        console.log('test')
         let descMenuconfig = '-';
         let descPlatformconfig = '-';
         let descToolchain = '-';
         let ws = '';
         if (this.workspaceRoot && this.workspaceRoot !== '') {
             ws = this.workspaceRoot;
-            const selectedPtxconfig = await ptxdistGetSelectedConfig(this.workspaceRoot);
-            const selectedPlatformconfig = await ptxdistGetSelectedPlatform(this.workspaceRoot);
-            const selectedToolchain = await ptxdistGetSelectedToolchain(this.workspaceRoot);
-            console.log(selectedPtxconfig);
+            if (!this.workspaceRoot.endsWith('ptxproj/') && !this.workspaceRoot.endsWith('ptxproj')) {
+                ws = this.workspaceRoot + (this.workspaceRoot.endsWith('/') ? '' : '/') + 'ptxproj'
+            }
+            const selectedPtxconfig = await ptxdistGetSelectedConfig(ws);
+            const selectedPlatformconfig = await ptxdistGetSelectedPlatform(ws);
+            const selectedToolchain = await ptxdistGetSelectedToolchain(ws);
             if (selectedPtxconfig.length == 1) {
                 descMenuconfig = selectedPtxconfig[0];
             }
