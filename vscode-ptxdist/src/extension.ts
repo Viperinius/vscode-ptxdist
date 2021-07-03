@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { createQuickPickForConfig } from './quickSelects';
+import { MenuCompletionItemProvider } from './ptxCompletionItemProviders';
 import { getFavPkgs, getWorkspaceRoot } from './util/config';
 import { exec } from './util/execShell';
 import { findDirs, findFiles } from './util/fsInteraction';
@@ -287,6 +288,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-imagesAll', async () => {
 		prepareAndRunPtxDefaultTaskWithFlags(workspaceRootPath, 'images');
 	}));
+
+	// register auto complete providers
+
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('ptxmenuentry', new MenuCompletionItemProvider()));
 	
 }
 

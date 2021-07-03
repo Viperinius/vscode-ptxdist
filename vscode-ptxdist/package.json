@@ -25,7 +25,8 @@
 		"onCommand:vscode-ptxdist.ptxcmd-addPreset",
 		"onCommand:vscode-ptxdist.ptxcmd-cleanAll",
 		"onCommand:vscode-ptxdist.ptxcmd-cleanPkgs",
-		"onView:ptxdist-commands"
+		"onView:ptxdist-commands",
+		"onLanguage:ptxmenuentry"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -262,7 +263,7 @@
 			{
 				"id": "ptxmenuentry",
 				"aliases": [
-					"ptxdistmenu"
+					"PTXdist Menu"
 				],
 				"extensions": [
 					".in"
