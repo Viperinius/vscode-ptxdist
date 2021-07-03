@@ -1,0 +1,13 @@
+{
+    "comments": {
+        "blockComment": [],
+        "lineComment": "#"
+    },
+    "folding": {
+        "markers": {
+            "start": "^\\s*(if|menu|choice)",
+            "end": "^\\s*(endif|endmenu|endchoice)"
+        },
+        "offSide": true
+    }
+}

@@ -1,0 +1,91 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "scopeName": "source.ptxmenuentry",
+    "patterns": [
+        {
+            "include": "#comment"
+        },
+        {
+            "include": "#helptext"
+        },
+        {
+            "include": "#string"
+        },
+        {
+            "include": "#identifier"
+        },
+        {
+            "include": "#operator"
+        },
+        {
+            "include": "#selection"
+        }
+    ],
+    "repository": {
+        "comment": {
+            "patterns": [
+                {
+                    "name": "markup.heading",
+                    "match": "^## SECTION=.*$"
+                },
+                {
+                    "name": "comment",
+                    "match": "#.*$"
+                }
+            ]
+        },
+        "helptext": {
+            "patterns": [
+                {
+                    "name": "constant.character.escape",
+                    "match": "^\\s+  .*$"
+                }
+            ]
+        },
+        "string": {
+            "patterns": [
+                {
+                    "name": "string.quoted",
+                    "begin": "\"",
+                    "end": "\""
+                }
+            ]
+        },
+        "identifier": {
+            "patterns": [
+                {
+                    "name": "keyword",
+                    "match": "\\b(config|menuconfig|if|endif|comment|menu|endmenu|source|choice|endchoice)\\b"
+                },
+                {
+                    "name": "keyword.control",
+                    "match": "\\b(default|depends on|help|prompt|select)\\b"
+                },
+                {
+                    "name": "keyword.control",
+                    "match": "\\b(string|bool|int|tristate|hex)\\b"
+                }
+            ]
+        },
+        "operator": {
+            "patterns": [
+                {
+                    "name": "keyword",
+                    "match": "\\B(\\!)\\b"
+                },
+                {
+                    "name": "keyword",
+                    "match": "\\B(&&|\\|\\|)\\B"
+                }
+            ]
+        },
+        "selection": {
+            "patterns": [
+                {
+                    "name": "constant.numeric",
+                    "match": "\\b(n|N|y|Y|m|M)\\b"
+                }
+            ]
+        }
+    }
+}
