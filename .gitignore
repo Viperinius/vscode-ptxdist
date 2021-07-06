@@ -10,6 +10,7 @@
 node_modules/
 
 **/out/
+**/.vscode-test/
 
 # ignore some temporary test folders
 ptxTestProj/

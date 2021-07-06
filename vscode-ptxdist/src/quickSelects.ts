@@ -18,10 +18,12 @@ export async function createQuickPickForConfig(itemNames: string[], exclusiveSel
 			const input = vscode.window.createQuickPick<PackageItem>();
 			//input.placeholder = 'Start typing the names of wanted packages';
 			input.ignoreFocusOut = true;
-			if (exclusiveSelect !== undefined)
+			if (exclusiveSelect !== undefined) {
 				input.canSelectMany = exclusiveSelect;
-			else
+			}
+			else {
 				input.canSelectMany = true;
+			}
 
 			// dont use "searching" (onDidChangeValue) for now
 			input.busy = true;

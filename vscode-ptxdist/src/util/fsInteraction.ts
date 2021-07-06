@@ -38,7 +38,7 @@ async function find(searchPath: string, searchPattern: string, type?: string, de
                 findType = '-type ' + type;
             }            
             if (depth && depth > 0) {
-                maxDepth = '-maxdepth ' + depth
+                maxDepth = '-maxdepth ' + depth;
             }
             cmd = 'find ' + searchPath + ' ' + maxDepth + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
         }

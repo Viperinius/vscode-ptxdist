@@ -19,8 +19,9 @@ export class BuildCmd {
 
     public withArg(arg: string | vscode.ShellQuotedString | undefined): BuildCmd {
         if (typeof(arg) === 'string') {
-            if (arg)
+            if (arg) {
                 this.args.push({ value: arg, quoting: vscode.ShellQuoting.Escape });
+            }
         }
         else if (arg !== undefined) {
             this.args.push(arg);
@@ -29,8 +30,9 @@ export class BuildCmd {
     }
 
     public withFlagArg(name: string, active?: boolean): BuildCmd {
-        if (active)
+        if (active) {
             this.withArg(name);
+        }
         return this;
     }
 

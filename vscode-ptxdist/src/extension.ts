@@ -8,7 +8,7 @@ import { getFavPkgs, getWorkspaceRoot } from './util/config';
 import { exec } from './util/execShell';
 import { findDirs, findFiles } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
-import { getProviderIdentifier, PtxDefaultTaskFilter, PtxDefaultTaskProvider, PtxFlags, PtxTask, PtxTaskFilter, PtxTaskProvider } from './util/tasks';
+import { getProviderIdentifier, PtxDefaultTaskFilter, PtxDefaultTaskProvider, ptxFlags, PtxTask, PtxTaskFilter, PtxTaskProvider } from './util/tasks';
 
 let ptxTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
 let ptxDefaultTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
@@ -20,22 +20,26 @@ async function prepareAndRunPtxTaskWithFlags(workspaceRootPath: string, commandT
 		return;
 	}
 	const selectMultiple = false;
-	const flags = await createQuickPickForConfig([...PtxFlags.keys()], selectMultiple);
-	if (selectMultiple)
-		assert(flags?.length == 1, "Should have returned only one flag value");
-	if (!flags)
+	const flags = await createQuickPickForConfig([...ptxFlags.keys()], selectMultiple);
+	if (selectMultiple) {
+		assert(flags?.length === 1, "Should have returned only one flag value");
+	}
+	if (!flags) {
 		return;
+	}
 
 	const id = getProviderIdentifier(commandType, packages, flags[0]);
-	if (ptxTaskProviders.size == 0 || !ptxTaskProviders.has(id)) {
-		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.PtxTaskType, new PtxTaskProvider(workspaceRootPath, packages, [commandType], flags)));
+	if (ptxTaskProviders.size === 0 || !ptxTaskProviders.has(id)) {
+		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.ptxTaskType, new PtxTaskProvider(workspaceRootPath, packages, [commandType], flags)));
 	}
 	let ptxTasks = await vscode.tasks.fetchTasks(new PtxTaskFilter);
-	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id == id);
-	if (pkgsTask)
+	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id === id);
+	if (pkgsTask) {
 		vscode.tasks.executeTask(pkgsTask);
-	else
+	}
+	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
+	}
 }
 
 async function prepareAndRunPtxTask(workspaceRootPath: string, commandType: string) {
@@ -46,48 +50,56 @@ async function prepareAndRunPtxTask(workspaceRootPath: string, commandType: stri
 	}
 
 	const id = getProviderIdentifier(commandType, packages);
-	if (ptxTaskProviders.size == 0 || !ptxTaskProviders.has(id)) {
-		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.PtxTaskType, new PtxTaskProvider(workspaceRootPath, packages, [commandType])));
+	if (ptxTaskProviders.size === 0 || !ptxTaskProviders.has(id)) {
+		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.ptxTaskType, new PtxTaskProvider(workspaceRootPath, packages, [commandType])));
 	}
 	let ptxTasks = await vscode.tasks.fetchTasks(new PtxTaskFilter);
-	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id == id);
-	if (pkgsTask)
+	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id === id);
+	if (pkgsTask) {
 		vscode.tasks.executeTask(pkgsTask);
-	else
+	}
+	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
+	}
 }
 
 async function prepareAndRunPtxDefaultTaskWithFlags(workspaceRootPath: string, commandType: string) {
 	const selectMultiple = false;
-	const flags = await createQuickPickForConfig([...PtxFlags.keys()], selectMultiple);
-	if (selectMultiple)
-		assert(flags?.length == 1, "Should have returned only one flag value");
-	if (!flags)
+	const flags = await createQuickPickForConfig([...ptxFlags.keys()], selectMultiple);
+	if (selectMultiple) {
+		assert(flags?.length === 1, "Should have returned only one flag value");
+	}
+	if (!flags) {
 		return;
+	}
 	
 	const id = getProviderIdentifier(commandType, [], flags[0]);
-	if (ptxDefaultTaskProviders.size == 0 || !ptxDefaultTaskProviders.has(id)) {
-		ptxDefaultTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxDefaultTaskProvider.PtxTaskType, new PtxDefaultTaskProvider(workspaceRootPath, [commandType], flags)));
+	if (ptxDefaultTaskProviders.size === 0 || !ptxDefaultTaskProviders.has(id)) {
+		ptxDefaultTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxDefaultTaskProvider.ptxTaskType, new PtxDefaultTaskProvider(workspaceRootPath, [commandType], flags)));
 	}
 	let ptxDefaultTasks = await vscode.tasks.fetchTasks(new PtxDefaultTaskFilter);
-	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id == id);
-	if (task)
+	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id === id);
+	if (task) {
 		vscode.tasks.executeTask(task);
-	else
+	}
+	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
+	}
 }
 
 async function prepareAndRunPtxDefaultTask(workspaceRootPath: string, commandType: string) {
 	const id = getProviderIdentifier(commandType, []);
-	if (ptxDefaultTaskProviders.size == 0 || !ptxDefaultTaskProviders.has(id)) {
-		ptxDefaultTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxDefaultTaskProvider.PtxTaskType, new PtxDefaultTaskProvider(workspaceRootPath, [commandType])));
+	if (ptxDefaultTaskProviders.size === 0 || !ptxDefaultTaskProviders.has(id)) {
+		ptxDefaultTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxDefaultTaskProvider.ptxTaskType, new PtxDefaultTaskProvider(workspaceRootPath, [commandType])));
 	}
 	let ptxDefaultTasks = await vscode.tasks.fetchTasks(new PtxDefaultTaskFilter);
-	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id == id);
-	if (task)
+	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id === id);
+	if (task) {
 		vscode.tasks.executeTask(task);
-	else
+	}
+	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
+	}
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -108,7 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
 		else {
 			workspaceRootPath = configuredRoot;
 			findDirs(workspaceRootPath, '*ptxproj', 1).then(values => {
-				if (values.length == 0 || values[0] == '') {
+				if (values.length === 0 || values[0] === '') {
 					vscode.window.showErrorMessage('Unable to find a "ptxproj" directory in the configured workspace root path!', 'Check settings').then(() => {
 						vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
 					});

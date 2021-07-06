@@ -25,14 +25,16 @@ export class PtxDefaultTaskFilter implements vscode.TaskFilter {
 export function getProviderIdentifier(commandType: string, packageNames: string[], flagsName?: string): string {
     const prefix: string = 'ptxtask_';
     let result = prefix + commandType;
-    if (packageNames.length > 0)
+    if (packageNames.length > 0) {
         result += '_' + packageNames.join('_');
-    if (flagsName)
+    }
+    if (flagsName) {
         result += '_' + flagsName;
+    }
     return result;
 }
 
-export const PtxFlags: Map<string, string[]> = new Map<string, string[]>([
+export const ptxFlags: Map<string, string[]> = new Map<string, string[]>([
     ["(quiet)", ['-q']],
     ["(quiet parallel)", ['-j', '-q']],
     ["(parallel)", ['-j']],
@@ -42,7 +44,7 @@ export const PtxFlags: Map<string, string[]> = new Map<string, string[]>([
 ]);
 
 export class PtxTaskProvider implements vscode.TaskProvider {
-    public static PtxTaskType = 'PTXdist';
+    public static ptxTaskType = 'PTXdist';
     protected tasks: vscode.Task[] | undefined;
     protected sharedState: string | undefined;
 
@@ -73,22 +75,28 @@ export class PtxTaskProvider implements vscode.TaskProvider {
 
         this.tasks = [];
         this.commandTypes.forEach(command => {
-            if (this.commandFilter && !this.commandFilter.includes(command))
-                return;
-            if (this.strippedCommandTypes.includes(command)) {
-                if (this.packages)
-                    this.tasks!.push(this.getTask(command + ' ' + this.packages.join(', '), getProviderIdentifier(command, this.packages), command, [], this.packages));
-                else
-                    this.tasks!.push(this.getTask(command, getProviderIdentifier(command, []), command, [], []));
+            if (this.commandFilter && !this.commandFilter.includes(command)) {
                 return;
             }
-            PtxFlags.forEach((flag, flagName) => {
-                if (this.flagFilter && !this.flagFilter.includes(flagName))
+            if (this.strippedCommandTypes.includes(command)) {
+                if (this.packages) {
+                    this.tasks!.push(this.getTask(command + ' ' + this.packages.join(', '), getProviderIdentifier(command, this.packages), command, [], this.packages));
+                }
+                else {
+                    this.tasks!.push(this.getTask(command, getProviderIdentifier(command, []), command, [], []));
+                }
+                return;
+            }
+            ptxFlags.forEach((flag, flagName) => {
+                if (this.flagFilter && !this.flagFilter.includes(flagName)) {
                     return;
-                if (this.packages)
+                }
+                if (this.packages) {
                     this.tasks!.push(this.getTask(command + ' ' + flagName + ' ' + this.packages.join(', '), getProviderIdentifier(command, this.packages, flagName), command, flag, this.packages));
-                else
+                }
+                else {
                     this.tasks!.push(this.getTask(command + ' ' + flagName, getProviderIdentifier(command, [], flagName), command, flag, []));
+                }
             });
         });
         return this.tasks;
@@ -97,7 +105,7 @@ export class PtxTaskProvider implements vscode.TaskProvider {
     protected getTask(name: string, id: string, commandType: string, flags: string[], packages: string[], definition?: PtxTask): vscode.Task {
         if (definition === undefined) {
             definition = {
-                type: PtxTaskProvider.PtxTaskType,
+                type: PtxTaskProvider.ptxTaskType,
                 name,
                 id,
                 commandType,
@@ -105,7 +113,7 @@ export class PtxTaskProvider implements vscode.TaskProvider {
                 packages
             };
         }
-        return new vscode.Task(definition, vscode.TaskScope.Workspace, name, PtxTaskProvider.PtxTaskType, new vscode.CustomExecution(async (): Promise<vscode.Pseudoterminal> => {
+        return new vscode.Task(definition, vscode.TaskScope.Workspace, name, PtxTaskProvider.ptxTaskType, new vscode.CustomExecution(async (): Promise<vscode.Pseudoterminal> => {
             return new PtxTaskTerminal(this.workspaceRoot, commandType, flags, packages);
         }));
     }
@@ -113,7 +121,7 @@ export class PtxTaskProvider implements vscode.TaskProvider {
 }
 
 export class PtxDefaultTaskProvider extends PtxTaskProvider {
-    public static PtxTaskType = 'PTXdist All';
+    public static ptxTaskType = 'PTXdist All';
 
     constructor(_workspaceRoot: string, _commandFilter?: string[], _flagFilter?: string[]) {
         super(_workspaceRoot, undefined, _commandFilter, _flagFilter);
@@ -124,7 +132,7 @@ export class PtxDefaultTaskProvider extends PtxTaskProvider {
     protected getTask(name: string, id: string, commandType: string, flags: string[], packages: string[], definition?: PtxTask): vscode.Task {
         if (definition === undefined) {
             definition = {
-                type: PtxDefaultTaskProvider.PtxTaskType,
+                type: PtxDefaultTaskProvider.ptxTaskType,
                 name,
                 id,
                 commandType,
@@ -132,7 +140,7 @@ export class PtxDefaultTaskProvider extends PtxTaskProvider {
                 packages: undefined
             };
         }
-        return new vscode.Task(definition, vscode.TaskScope.Workspace, name, PtxDefaultTaskProvider.PtxTaskType, new vscode.CustomExecution(async (): Promise<vscode.Pseudoterminal> => {
+        return new vscode.Task(definition, vscode.TaskScope.Workspace, name, PtxDefaultTaskProvider.ptxTaskType, new vscode.CustomExecution(async (): Promise<vscode.Pseudoterminal> => {
             return new PtxTaskTerminal(this.workspaceRoot, commandType, flags, undefined);
         }));
     }
@@ -147,13 +155,17 @@ class PtxTaskTerminal implements vscode.Pseudoterminal {
     private ptxprojDirectory: string;
 
     constructor(private workspaceRoot: string, private commandType: string, private flags: string[], private packages?: string[]) {
-        if (workspaceRoot.endsWith('ptxproj/') || workspaceRoot.endsWith('ptxproj'))
+        if (workspaceRoot.endsWith('ptxproj/') || workspaceRoot.endsWith('ptxproj')) {
             this.ptxprojDirectory = workspaceRoot;
-        else
-            if (workspaceRoot.endsWith('/'))
+        }
+        else {
+            if (workspaceRoot.endsWith('/')) {
                 this.ptxprojDirectory = workspaceRoot + 'ptxproj';
-            else
-                this.ptxprojDirectory = workspaceRoot + '/ptxproj'
+            }
+            else {
+                this.ptxprojDirectory = workspaceRoot + '/ptxproj';
+            }
+        }
     }
 
     open(initialDimensions: vscode.TerminalDimensions | undefined): void {
@@ -168,7 +180,7 @@ class PtxTaskTerminal implements vscode.Pseudoterminal {
     private async exec(): Promise<number> {
         let commandBuilder = BuildCmd.build('ptxdist', this.commandType).withArg('-n19').withArgArray(this.flags).withArgArray(this.packages);
         const fullCommand: string = commandBuilder.generate();
-        const fullCommandCleanAllHandling: string = (this.commandType == 'clean' ? 'yes | ' : '') + fullCommand;
+        const fullCommandCleanAllHandling: string = (this.commandType === 'clean' ? 'yes | ' : '') + fullCommand;
 
         this.writeEmitter.fire(`Command: ${fullCommand}\r\n\r\n`);
 
@@ -193,8 +205,9 @@ class PtxTaskTerminal implements vscode.Pseudoterminal {
                 this.writeEmitter.fire(`\x1b[31m${this.formatWrite((error as Error).message)}\x1b[0m`);
             });
 
-        if (hadStdErr && returnCode == 0)
+        if (hadStdErr && returnCode === 0) {
             return -1;
+        }
         return returnCode;
     }
 
