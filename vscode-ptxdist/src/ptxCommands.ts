@@ -180,7 +180,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
     }
 }
 
-class PtxCommand extends vscode.TreeItem {
+export class PtxCommand extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         private desc: string,
