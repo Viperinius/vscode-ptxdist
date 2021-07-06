@@ -1,0 +1,171 @@
+{
+	"PTXdist Get": {
+		"prefix": ["get"],
+		"description": "The default PTXdist get stage",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Get",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.get:",
+			"\t@\\$(call targetinfo)",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist Extract": {
+		"prefix": ["extract"],
+		"description": "The default PTXdist extract stage",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Extract",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.extract:",
+			"\t@$(call targetinfo)",
+			"\t@\\$(call clean, \\$(${1/([^\\.-]*)(\\-)*/${1:/upcase}${2:+_}/g}_DIR))",
+			"\t@\\$(call extract, ${1})",
+			"\t@\\$(call patchin, ${1})",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist Prepare": {
+		"prefix": ["prepare"],
+		"description": "The default PTXdist prepare stage",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Prepare",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.prepare:",
+			"\t@\\$(call targetinfo)",
+			"\t@\\$(call world/prepare, ${1})",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist Compile": {
+		"prefix": ["compile"],
+		"description": "The default PTXdist compile stage",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Compile",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.compile:",
+			"\t@\\$(call targetinfo)",
+			"\t@\\$(call world/compile, ${1})",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist Install": {
+		"prefix": ["install"],
+		"description": "The default PTXdist install stage",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Install",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.install:",
+			"\t@\\$(call targetinfo)",
+			"\t@\\$(call world/install, ${1})",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist Targetinstall": {
+		"prefix": ["targetinstall"],
+		"description": "A barebone PTXdist targetinstall stage skeleton",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT Targetinstall",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.targetinstall:",
+			"\t@\\$(call targetinfo)",
+			"",
+			"\t@\\$(call install_init, ${1})",
+			"\t@\\$(call install_fixup, ${1},PRIORITY,${2:optional})",
+			"\t@\\$(call install_fixup, ${1},SECTION,${3:base})",
+			"\t@\\$(call install_fixup, ${1},AUTHOR,\"${4}\")",
+			"\t@\\$(call install_fixup, ${1},DESCRIPTION,${5:missing})",
+			"\t$0",
+			"\t@\\$(call install_finish, ${1})",
+			"",
+			"\t@\\$(call touch)"
+		]
+	},
+	"PTXdist Skip": {
+		"prefix": ["skip"],
+		"description": "PTXdist stage definition if it should do nothing",
+		"body": [
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"$LINE_COMMENT ${2/(.*)/${1:/capitalize}/} (Skip)",
+			"$LINE_COMMENT ----------------------------------------------------------------------------",
+			"",
+			"\\$(STATEDIR)/${1:pkg}.${2:stage_to_skip}:",
+			"\t@\\$(call targetinfo)",
+			"\t@\\$(call touch)$0"
+		]
+	},
+	"PTXdist install_lib": {
+		"prefix": ["install_lib"],
+		"description": "PTXdist install_lib macro call",
+		"body": [
+			"@\\$(call install_lib, ${1:pkg}, ${2:0}, ${3:0}, ${4:0644}, ${5:libname})$0"
+		]
+	},
+	"PTXdist install_copy": {
+		"prefix": ["install_copy"],
+		"description": "PTXdist install_copy macro call",
+		"body": [
+			"@\\$(call install_copy, ${1:pkg}, ${2:0}, ${3:0}, ${4:0644}, ${5:source}${6:, optional_dest}${7:, optional_strip})$0"
+		]
+	},
+	"PTXdist install_alternative": {
+		"prefix": ["install_alternative"],
+		"description": "PTXdist install_alternative macro call",
+		"body": [
+			"@\\$(call install_alternative, ${1:pkg}, ${2:0}, ${3:0}, ${4:0644}, ${5:dest})$0"
+		]
+	},
+	"PTXdist install_link": {
+		"prefix": ["install_link"],
+		"description": "PTXdist install_link macro call",
+		"body": [
+			"@\\$(call install_link, ${1:pkg}, ${2:relative_path_point_to}, ${3:link})$0"
+		]
+	},
+	"PTXdist install_archive": {
+		"prefix": ["install_archive"],
+		"description": "PTXdist install_archive macro call",
+		"body": [
+			"@\\$(call install_archive, ${1:pkg}, ${2:0}, ${3:0}, ${4:archive}, ${5:base_path})$0"
+		]
+	},
+	"PTXdist install_tree": {
+		"prefix": ["install_tree"],
+		"description": "PTXdist install_tree macro call",
+		"body": [
+			"@\\$(call install_tree, ${1:pkg}, ${2:0}, ${3:0}, ${4:source_dir}, ${5:dest_dir}${6:, optional_strip})$0"
+		]
+	},
+	"PTXdist install_alternative_tree": {
+		"prefix": ["install_alternative_tree"],
+		"description": "PTXdist install_alternative_tree macro call",
+		"body": [
+			"@\\$(call install_alternative_tree, ${1:pkg}, ${2:0}, ${3:0}, ${4:dest_dir})$0"
+		]
+	},
+	"PTXdist install_glob": {
+		"prefix": ["install_glob"],
+		"description": "PTXdist install_glob macro call",
+		"body": [
+			"@\\$(call install_glob, ${1:pkg}, ${2:0}, ${3:0}, ${4:source_dir}, ${5:dest_dir}, ${6:yes_glob}, ${7:no_glob}${8:, optional_strip})$0"
+		]
+	},
+	"PTXdist install_replace": {
+		"prefix": ["install_replace"],
+		"description": "PTXdist install_replace macro call",
+		"body": [
+			"@\\$(call install_replace, ${1:pkg}, ${2:filename}, ${3:placeholder}, ${4:value})$0"
+		]
+	}
+}
