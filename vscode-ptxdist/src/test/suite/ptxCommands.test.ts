@@ -24,7 +24,7 @@ suite('vscode-ptxdist.suite.ptxCommands', () => {
         assert.strictEqual(c[8].label, 'Get');
         assert.strictEqual(c[9].label, 'Images');
 
-        let clean: PtxCommand | undefined = c.find(elem => elem.getCmdId() == 'clean');
+        let clean: PtxCommand | undefined = c.find(elem => elem.getCmdId() === 'clean');
         assert.strictEqual(clean !== undefined, true);
 
         let cc: PtxCommand[] = await p.getChildren(clean);
