@@ -152,10 +152,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// register commands
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World there from vscode-ptxdist!');
-	}));
-
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', async () => {
 		let cmd: string = '';
 		if (workspaceRootPath !== '') {

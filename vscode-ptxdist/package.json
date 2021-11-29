@@ -19,7 +19,6 @@
 	],
 	"activationEvents": [
 		"onCommand:workbench.action.tasks.runTask",
-		"onCommand:vscode-ptxdist.helloWorld",
 		"onCommand:vscode-ptxdist.printWorkspaceRoot",
 		"onCommand:vscode-ptxdist.selectPtxConfig",
 		"onCommand:vscode-ptxdist.selectPlatformConfig",
@@ -77,10 +76,6 @@
 			}
 		],
 		"commands": [
-			{
-				"command": "vscode-ptxdist.helloWorld",
-				"title": "Hello World"
-			},
 			{
 				"command": "vscode-ptxdist.printWorkspaceRoot",
 				"title": "Print Workspace Root"
