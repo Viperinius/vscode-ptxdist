@@ -4,6 +4,22 @@ import { exec } from './execShell';
 import { currentOsPlatform, findLinks, OsPlatform } from './fsInteraction';
 import { runInTerminal } from './terminalInteraction';
 
+export async function ptxdistGetNewestBin(): Promise<string> {
+    if (currentOsPlatform !== OsPlatform.linux) {
+        return 'ptxdist';
+    }
+
+    const versionsResult = await exec('which ptxdist | xargs dirname | xargs ls | grep ptxdist');
+    if (versionsResult.stdErr !== '') {
+        return 'ptxdist';
+    }
+    const versions = versionsResult.stdOut.split('\n').sort();
+    if (!versions.length) {
+        return 'ptxdist';
+    }
+    return versions.pop()!;
+}
+
 export async function ptxdistGetSelected(workspaceRootPath: string, selectedLinkName: string): Promise<string[]> {
     if (currentOsPlatform !== OsPlatform.linux || !workspaceRootPath.includes('ptxproj')) {
         return [];
@@ -56,7 +72,7 @@ export async function ptxdistPlatform(workspaceRootPath: string, pathToPlatformC
     else {
         cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
     }
-    cmd += 'ptxdist platform ' + pathToPlatformConfig;
+    cmd += await ptxdistGetNewestBin() + ' platform ' + pathToPlatformConfig;
     const result = await exec(cmd);
 
     if (result.stdErr !== '') {
