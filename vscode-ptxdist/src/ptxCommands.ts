@@ -24,10 +24,10 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
     private getCmds(parentCmdId?: string): PtxCommand[] {
         const rootCmds = [
             new PtxCommand("Clean", "Run ptxdist clean", "clean", vscode.TreeItemCollapsibleState.Collapsed, "trash"),
-            new PtxCommand("Go", "Run ptxdist go", "go", vscode.TreeItemCollapsibleState.Collapsed, "build"),
+            new PtxCommand("Go", "Run ptxdist go", "go", vscode.TreeItemCollapsibleState.Collapsed, "combine"),
             new PtxCommand("Targetinstall", "Run ptxdist targetinstall", "targetinstall", vscode.TreeItemCollapsibleState.Collapsed, "references"),
             new PtxCommand("Install", "Run ptxdist install", "install", vscode.TreeItemCollapsibleState.Collapsed, "references"),
-            new PtxCommand("Compile", "Run ptxdist compile", "compile", vscode.TreeItemCollapsibleState.Collapsed, "build"),
+            new PtxCommand("Compile", "Run ptxdist compile", "compile", vscode.TreeItemCollapsibleState.Collapsed, "combine"),
             new PtxCommand("Prepare", "Run ptxdist prepare", "prepare", vscode.TreeItemCollapsibleState.Collapsed, "settings"),
             new PtxCommand("Extract", "Run ptxdist extract", "extract", vscode.TreeItemCollapsibleState.Collapsed, "unfold"),
             new PtxCommand("URLcheck", "Run ptxdist urlcheck", "urlcheck", vscode.TreeItemCollapsibleState.Collapsed, "radio-tower"),
@@ -203,10 +203,7 @@ export class PtxCommand extends vscode.TreeItem {
         }
     }
 
-    iconPath = {
-        light: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'light', this.iconNameNoExt + '.svg'),
-        dark: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'dark', this.iconNameNoExt + '.svg')
-    };
+    iconPath = new vscode.ThemeIcon(this.iconNameNoExt);
 
     getCmdId(): string {
         return this.cmdId;
