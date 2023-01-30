@@ -4,7 +4,7 @@ import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { createQuickPickForConfig } from './quickSelects';
 import { MenuCompletionItemProvider } from './ptxCompletionItemProviders';
-import { getFavPkgs, getWorkspaceRoot } from './util/config';
+import { getFavPkgs, getWorkspaceRoot, setCurrentMenuconfigSetting, setCurrentPlatformconfigSetting, setCurrentToolchainSetting } from './util/config';
 import { exec } from './util/execShell';
 import { findDirs, findFiles, findLinks } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
@@ -187,8 +187,9 @@ export function activate(context: vscode.ExtensionContext) {
 				element.description = label.replace(workspaceRootPath, '.');
 				element.tooltip = detail!;
 				ptxGeneralConfigProvider.refresh([element]);
+				setCurrentMenuconfigSetting(detail!);
 				// TODO check if current platform still correct
-			}			
+			}
 			quickPick.hide();
 		});
 		quickPick.onDidHide(() => quickPick.dispose());
@@ -213,6 +214,7 @@ export function activate(context: vscode.ExtensionContext) {
 				element.description = label.replace(workspaceRootPath, '.');
 				element.tooltip = detail!;
 				ptxGeneralConfigProvider.refresh([element]);
+				setCurrentPlatformconfigSetting(detail!);
 				// TODO check if current platform still correct
 			}
 			quickPick.hide();
@@ -237,6 +239,7 @@ export function activate(context: vscode.ExtensionContext) {
 				element.description = label.replace(workspaceRootPath, '.');
 				element.tooltip = label;
 				ptxGeneralConfigProvider.refresh([element]);
+				setCurrentToolchainSetting(label);
 				// TODO check if current platform still correct
 			}
 			quickPick.hide();
