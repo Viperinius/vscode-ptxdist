@@ -6,7 +6,7 @@ import { createQuickPickForConfig } from './quickSelects';
 import { MenuCompletionItemProvider } from './ptxCompletionItemProviders';
 import { getFavPkgs, getWorkspaceRoot } from './util/config';
 import { exec } from './util/execShell';
-import { findDirs, findFiles } from './util/fsInteraction';
+import { findDirs, findFiles, findLinks } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
 import { getProviderIdentifier, PtxDefaultTaskFilter, PtxDefaultTaskProvider, ptxFlags, PtxTask, PtxTaskFilter, PtxTaskProvider } from './util/tasks';
 
@@ -121,8 +121,12 @@ export function activate(context: vscode.ExtensionContext) {
 			workspaceRootPath = configuredRoot;
 			findDirs(workspaceRootPath, '*ptxproj', 1).then(values => {
 				if (values.length === 0 || values[0] === '') {
-					vscode.window.showErrorMessage('Unable to find a "ptxproj" directory in the configured workspace root path!', 'Check settings').then(() => {
-						vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+					findLinks(workspaceRootPath, '*ptxproj', 1).then(values => {
+						if (values.length === 0 || values[0] === '') {
+							vscode.window.showErrorMessage('Unable to find a "ptxproj" directory in the configured workspace root path!', 'Check settings').then(() => {
+								vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+							});
+						}
 					});
 				}
 			});
@@ -170,18 +174,18 @@ export function activate(context: vscode.ExtensionContext) {
 		const filteredResults = findResult.filter(name => name.includes('configs'));
 		console.log(filteredResults);
 		
-		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.') }));
+		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.'), detail: label }));
 		const quickPick = vscode.window.createQuickPick();
 		quickPick.items = items;
-		quickPick.onDidChangeSelection(([{ label }]) => {
-			const shellResult = ptxInteraction.ptxdistSelect(workspaceRootPath, label);
+		quickPick.onDidChangeSelection(([{ label, detail }]) => {
+			const shellResult = ptxInteraction.ptxdistSelect(workspaceRootPath, detail!);
 			if (!shellResult) {
 				vscode.window.showErrorMessage(`Could not set ${label} as menuconfig`);
 			}
 			else {
 				vscode.window.showInformationMessage(`Selected: ${label}`);
 				element.description = label.replace(workspaceRootPath, '.');
-				element.tooltip = label;
+				element.tooltip = detail!;
 				ptxGeneralConfigProvider.refresh([element]);
 				// TODO check if current platform still correct
 			}			
@@ -196,18 +200,18 @@ export function activate(context: vscode.ExtensionContext) {
 		const filteredResults = findResult.filter(name => name.includes('configs'));
 		console.log(filteredResults);
 		
-		const items = filteredResults.map(label => ({ label }));
+		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.'), detail: label }));
 		const quickPick = vscode.window.createQuickPick();
 		quickPick.items = items;
-		quickPick.onDidChangeSelection(([{ label }]) => {
-			const shellResult = ptxInteraction.ptxdistPlatform(workspaceRootPath, label);
+		quickPick.onDidChangeSelection(([{ label, detail }]) => {
+			const shellResult = ptxInteraction.ptxdistPlatform(workspaceRootPath, detail!);
 			if (!shellResult) {
 				vscode.window.showErrorMessage(`Could not set ${label} as platformconfig`);
 			}
 			else {
 				vscode.window.showInformationMessage(`Selected: ${label}`);
 				element.description = label.replace(workspaceRootPath, '.');
-				element.tooltip = label;
+				element.tooltip = detail!;
 				ptxGeneralConfigProvider.refresh([element]);
 				// TODO check if current platform still correct
 			}

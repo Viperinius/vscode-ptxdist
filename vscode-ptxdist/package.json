@@ -31,7 +31,7 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"configuration":[
+		"configuration": [
 			{
 				"title": "PTXdist",
 				"properties": {
@@ -53,7 +53,7 @@
 					"vscode-ptxdist.workspaceRoot": {
 						"description": "The base path of the workspace. This is used to determine available configurations and where to execute PTXdist tasks. Generally, this setting should be set to the parent directory of some kind of 'ptxproj' folder. After this has been set, you should probably reload the window.",
 						"default": "",
-						"type":"string",
+						"type": "string",
 						"scope": "window"
 					},
 					"vscode-ptxdist.presets.favouritePackages": {
@@ -249,7 +249,7 @@
 				}
 			]
 		},
-		"keybindings":[
+		"keybindings": [
 			{
 				"command": "workbench.action.tasks.terminate",
 				"key": "ctrl+alt+x",
@@ -302,5 +302,8 @@
 		"mocha": "^8.1.3",
 		"typescript": "^4.1.2",
 		"vscode-test": "^1.4.1"
+	},
+	"dependencies": {
+		"vsce": "^2.5.0"
 	}
 }

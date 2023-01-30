@@ -39,7 +39,7 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
         if (this.workspaceRoot && this.workspaceRoot !== '') {
             ws = this.workspaceRoot;
             if (!this.workspaceRoot.endsWith('ptxproj/') && !this.workspaceRoot.endsWith('ptxproj')) {
-                ws = this.workspaceRoot + (this.workspaceRoot.endsWith('/') ? '' : '/') + 'ptxproj';
+                ws = this.workspaceRoot + (this.workspaceRoot.endsWith('/') ? '' : '/') + 'ptxproj/';
             }
             const selectedPtxconfig = await ptxdistGetSelectedConfig(ws);
             const selectedPlatformconfig = await ptxdistGetSelectedPlatform(ws);

@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 
 import * as vscode from 'vscode';
-import { PtxGenConfig, PtxGeneralConfigProvider } from '../../ptxGeneralConfig'
+import { PtxGenConfig, PtxGeneralConfigProvider } from '../../ptxGeneralConfig';
 
 suite('vscode-ptxdist.suite.ptxGeneralConfig', () => {
 	test('instanceOfClass', () => {
