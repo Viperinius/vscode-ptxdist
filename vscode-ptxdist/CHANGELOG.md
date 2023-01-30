@@ -10,9 +10,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Set favourite commands / shortcuts to commands
 
-## [0.1.0] - 2023-01-30
+## [1.0.0] - 2023-01-30
 
-- Initial pre-release
+- Initial release
 
 ### Added
 
