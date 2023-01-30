@@ -3,7 +3,7 @@
 	"displayName": "PTXdist",
 	"description": "",
 	"icon": "resources/ptxdist-icon.png",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "Viperinius",
 	"repository": {
 		"url": "https://github.com/Viperinius/vscode-ptxdist",
