@@ -12,5 +12,7 @@ node_modules/
 **/out/
 **/.vscode-test/
 
+*.vsix
+
 # ignore some temporary test folders
 ptxTestProj/
