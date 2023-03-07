@@ -259,7 +259,11 @@
 				"extensions": [
 					".in"
 				],
-				"configuration": "./language-configuration.json"
+				"configuration": "./language-configuration.json",
+				"icon": {
+					"light": "./resources/kconfig-light.png",
+					"dark": "./resources/kconfig-dark.png"
+				}
 			}
 		],
 		"grammars": [
