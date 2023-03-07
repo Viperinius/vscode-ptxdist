@@ -25,14 +25,14 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
         const rootCmds = [
             new PtxCommand("Clean", "Run ptxdist clean", "clean", vscode.TreeItemCollapsibleState.Collapsed, "trash"),
             new PtxCommand("Go", "Run ptxdist go", "go", vscode.TreeItemCollapsibleState.Collapsed, "combine"),
-            new PtxCommand("Targetinstall", "Run ptxdist targetinstall", "targetinstall", vscode.TreeItemCollapsibleState.Collapsed, "references"),
-            new PtxCommand("Install", "Run ptxdist install", "install", vscode.TreeItemCollapsibleState.Collapsed, "references"),
-            new PtxCommand("Compile", "Run ptxdist compile", "compile", vscode.TreeItemCollapsibleState.Collapsed, "combine"),
-            new PtxCommand("Prepare", "Run ptxdist prepare", "prepare", vscode.TreeItemCollapsibleState.Collapsed, "settings"),
-            new PtxCommand("Extract", "Run ptxdist extract", "extract", vscode.TreeItemCollapsibleState.Collapsed, "unfold"),
-            new PtxCommand("URLcheck", "Run ptxdist urlcheck", "urlcheck", vscode.TreeItemCollapsibleState.Collapsed, "radio-tower"),
             new PtxCommand("Get", "Run ptxdist get", "get", vscode.TreeItemCollapsibleState.Collapsed, "cloud-download"),
-            new PtxCommand("Images", "Run ptxdist images", "images", vscode.TreeItemCollapsibleState.Collapsed, "file-zip")
+            new PtxCommand("Extract", "Run ptxdist extract", "extract", vscode.TreeItemCollapsibleState.Collapsed, "unfold"),
+            new PtxCommand("Prepare", "Run ptxdist prepare", "prepare", vscode.TreeItemCollapsibleState.Collapsed, "settings"),
+            new PtxCommand("Compile", "Run ptxdist compile", "compile", vscode.TreeItemCollapsibleState.Collapsed, "combine"),
+            new PtxCommand("Install", "Run ptxdist install", "install", vscode.TreeItemCollapsibleState.Collapsed, "references"),
+            new PtxCommand("Targetinstall", "Run ptxdist targetinstall", "targetinstall", vscode.TreeItemCollapsibleState.Collapsed, "references"),
+            new PtxCommand("Images", "Run ptxdist images", "images", vscode.TreeItemCollapsibleState.Collapsed, "file-zip"),
+            new PtxCommand("URLcheck", "Run ptxdist urlcheck", "urlcheck", vscode.TreeItemCollapsibleState.Collapsed, "radio-tower"),
         ];
         const children: Record<string, PtxCommand[]> = {
             "clean": [
