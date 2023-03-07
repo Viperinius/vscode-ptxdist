@@ -97,3 +97,11 @@ export async function findDirs(searchPath: string, namePattern: string, depth?: 
 export async function findDirsFiles(searchPath: string, namePattern: string): Promise<string[]> {
     return find(searchPath, namePattern);
 }
+
+export function getPtxprojFromWorkspace(workspaceRoot: string): string {
+    return path.join(workspaceRoot, 'ptxproj');
+}
+
+export function buildPtxprojPath(workspaceRoot: string, ...paths: string[]): string {
+    return path.join(getPtxprojFromWorkspace(workspaceRoot), ...paths);
+}

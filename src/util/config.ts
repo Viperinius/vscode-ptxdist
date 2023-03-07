@@ -10,6 +10,10 @@ function setConfigValue<T>(configKey: string, newValue: T) {
     config.update(configKey, newValue, vscode.ConfigurationTarget.Workspace);
 }
 
+export function getRestrictConfigSearch() {
+    return getConfigValues<boolean>('vscode-ptxdist.search.configs.restrict');
+}
+
 export function getWorkspaceRoot(): string | undefined {
     return getConfigValues<string>('vscode-ptxdist.workspaceRoot');
 }

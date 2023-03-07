@@ -44,6 +44,11 @@
 						"default": "",
 						"type": "string"
 					},
+					"vscode-ptxdist.search.configs.restrict": {
+						"markdownDescription": "Restrict searching for a menuconfig and platformconfig to within the default path (`configs/`)",
+						"default": true,
+						"type": "boolean"
+					},
 					"vscode-ptxdist.workspaceRoot": {
 						"description": "The base path of the workspace. This is used to determine available configurations and where to execute PTXdist tasks. Generally, this setting should be set to the parent directory of some kind of 'ptxproj' folder. After this has been set, you should probably reload the window.",
 						"default": "",

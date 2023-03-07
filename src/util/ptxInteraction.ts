@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { exec } from './execShell';
-import { currentOsPlatform, findLinks, OsPlatform } from './fsInteraction';
+import { buildPtxprojPath, currentOsPlatform, findDirs, findFiles, findLinks, OsPlatform } from './fsInteraction';
 import { runInTerminal } from './terminalInteraction';
+import { getRestrictConfigSearch } from './config';
 
 export async function ptxdistGetNewestBin(): Promise<string> {
     if (currentOsPlatform !== OsPlatform.linux) {
@@ -37,6 +38,32 @@ export async function ptxdistGetSelectedPlatform(workspaceRootPath: string) {
 
 export async function ptxdistGetSelectedToolchain(workspaceRootPath: string) {
     return ptxdistGetSelected(workspaceRootPath, 'selected_toolchain');
+}
+
+export async function ptxdistGetAvailableConfigs(workspaceRootPath: string, configName: string): Promise<string[]> {
+	let searchPath = workspaceRootPath;
+    if (getRestrictConfigSearch()) {
+        searchPath = buildPtxprojPath(searchPath, 'configs');
+    }
+
+    const findResult = await findFiles(searchPath, `*${configName}*`);
+    if (getRestrictConfigSearch()) {
+        return findResult;
+    }
+
+    return findResult.filter(name => name.includes('configs'));
+}
+
+export async function ptxdistGetAvailableMenuconfigs(workspaceRootPath: string): Promise<string[]> {
+    return ptxdistGetAvailableConfigs(workspaceRootPath, 'ptxconfig');
+}
+
+export async function ptxdistGetAvailablePlatformconfigs(workspaceRootPath: string): Promise<string[]> {
+    return ptxdistGetAvailableConfigs(workspaceRootPath, 'platformconfig');
+}
+
+export async function ptxdistGetAvailableToolchains(): Promise<string[]> {
+    return findDirs('/opt/', '*arm-linux-gnueabihf/bin');
 }
 
 export async function ptxdistSelect(workspaceRootPath: string, pathToMenuConfig: string): Promise<boolean> {
