@@ -113,8 +113,10 @@ export function activate(context: vscode.ExtensionContext) {
 		// try to load workspaceRoot from config
 		const configuredRoot = getWorkspaceRoot();
 		if (!configuredRoot || configuredRoot === '') {
-			vscode.window.showErrorMessage('No workspace root path has been specified. Please provide this setting in the workspace settings.', 'Go to settings').then(() => {
-				vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+			vscode.window.showErrorMessage('No workspace root path has been specified. Please provide this setting in the workspace settings.', 'Go to settings').then((res) => {
+				if (res !== undefined) {
+					vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+				}
 			});
 		}
 		else {
@@ -123,8 +125,10 @@ export function activate(context: vscode.ExtensionContext) {
 				if (values.length === 0 || values[0] === '') {
 					findLinks(workspaceRootPath, '*ptxproj', 1).then(values => {
 						if (values.length === 0 || values[0] === '') {
-							vscode.window.showErrorMessage('Unable to find a "ptxproj" directory in the configured workspace root path!', 'Check settings').then(() => {
-								vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+							vscode.window.showErrorMessage('Unable to find a "ptxproj" directory in the configured workspace root path!', 'Check settings').then((res) => {
+								if (res !== undefined) {
+									vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.workspaceRoot');
+								}
 							});
 						}
 					});
