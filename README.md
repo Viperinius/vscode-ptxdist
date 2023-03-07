@@ -24,6 +24,7 @@ This extension contributes the following settings:
 * `vscode-ptxdist.current.platformconfig`: contains the currently selected PTXdist platformconfig
 * `vscode-ptxdist.current.toolchain`: contains the currently selected toolchain
 * `vscode-ptxdist.workspaceRoot`: base path of the workspace (to determine available configs)
+* `vscode-ptxdist.search.configs.restrict`: only search for PTXdist configs using the default path below the workspace root
 * `vscode-ptxdist.presets.favouritePackages`: add package names to this list to use them with PTXdist commands
 * `vscode-ptxdist.presets.favouriteCommands`: WIP, has no effect yet
 
