@@ -36,12 +36,12 @@ suite('vscode-ptxdist.suite.util.fsInteraction', () => {
         const findResult = await findDirs(tmpDir, '*');
         // expected: three dirs in tree below and tmpDir itself
         assert.strictEqual(findResult.length, 4);
-        assert.deepStrictEqual(findResult, [
+        assert.deepStrictEqual(findResult.sort(), [
             tmpDir,
             path.join(tmpDir, dir1),
             path.join(tmpDir, dir1, dir1SubDir),
             path.join(tmpDir, dir2)
-        ]);
+        ].sort());
     });
 
     test('findDirsPattern', async () => {
@@ -57,11 +57,11 @@ suite('vscode-ptxdist.suite.util.fsInteraction', () => {
         const findResult = await findDirs(tmpDir, '*', 1);
         // expected: two dirs below and tmpDir itself
         assert.strictEqual(findResult.length, 3);
-        assert.deepStrictEqual(findResult, [
+        assert.deepStrictEqual(findResult.sort(), [
             tmpDir,
             path.join(tmpDir, dir1),
             path.join(tmpDir, dir2)
-        ]);
+        ].sort());
     });
 
     test('findLinks', async () => {
@@ -77,18 +77,18 @@ suite('vscode-ptxdist.suite.util.fsInteraction', () => {
         const findResult = await findFiles(tmpDir, '*');
         // expected: three files
         assert.strictEqual(findResult.length, 3);
-        assert.deepStrictEqual(findResult, [
+        assert.deepStrictEqual(findResult.sort(), [
             path.join(tmpDir, dir1, dir1File),
             path.join(tmpDir, dir2, dir2File),
             path.join(tmpDir, rootFile)
-        ]);
+        ].sort());
     });
 
     test('findDirsFiles', async () => {
         const findResult = await findDirsFiles(tmpDir, '*');
         // expected: tmpDir itself, three dirs + one from symlink, three files
         assert.strictEqual(findResult.length, 8);
-        assert.deepStrictEqual(findResult, [
+        assert.deepStrictEqual(findResult.sort(), [
             tmpDir,
             path.join(tmpDir, dir1),
             path.join(tmpDir, dir1, dir1File),
@@ -97,7 +97,7 @@ suite('vscode-ptxdist.suite.util.fsInteraction', () => {
             path.join(tmpDir, dir2, dir2File),
             path.join(tmpDir, dir1),
             path.join(tmpDir, rootFile)
-        ]);
+        ].sort());
     });
 
     test('getPtxprojFromWorkspace', () => {
