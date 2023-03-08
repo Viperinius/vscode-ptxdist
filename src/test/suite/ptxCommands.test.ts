@@ -15,14 +15,14 @@ suite('vscode-ptxdist.suite.ptxCommands', () => {
         assert.strictEqual(c.length, 10);
         assert.strictEqual(c[0].label, 'Clean');
         assert.strictEqual(c[1].label, 'Go');
-        assert.strictEqual(c[2].label, 'Targetinstall');
-        assert.strictEqual(c[3].label, 'Install');
-        assert.strictEqual(c[4].label, 'Compile');
-        assert.strictEqual(c[5].label, 'Prepare');
-        assert.strictEqual(c[6].label, 'Extract');
-        assert.strictEqual(c[7].label, 'URLcheck');
-        assert.strictEqual(c[8].label, 'Get');
-        assert.strictEqual(c[9].label, 'Images');
+        assert.strictEqual(c[2].label, 'Get');
+        assert.strictEqual(c[3].label, 'Extract');
+        assert.strictEqual(c[4].label, 'Prepare');
+        assert.strictEqual(c[5].label, 'Compile');
+        assert.strictEqual(c[6].label, 'Install');
+        assert.strictEqual(c[7].label, 'Targetinstall');
+        assert.strictEqual(c[8].label, 'Images');
+        assert.strictEqual(c[9].label, 'URLcheck');
 
         let clean: PtxCommand | undefined = c.find(elem => elem.getCmdId() === 'clean');
         assert.strictEqual(clean !== undefined, true);
