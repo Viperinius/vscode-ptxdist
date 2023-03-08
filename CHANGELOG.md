@@ -10,6 +10,26 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Set favourite commands / shortcuts to commands
 
+## [1.1.0] - 2023-03-08
+
+- Bugfixes and a new view for the PTXdist configurations
+
+### Added
+
+- New setting "Restrict config search" to speed up searching for configurations by just looking in the default location
+- File icon for `.in` files
+
+### Changed
+
+- Reorder the PTXdist commands to represent the workflow as best as possible
+- Rework the "General configuration" view to show available configs as a tree with a refresh button
+- Update dependencies
+
+### Fixed
+
+- Fix opening the settings when the respective modal was dismissed by the user
+- Fix broken evaluation of PTXdist config selection result
+
 ## [1.0.0] - 2023-01-30
 
 - Initial release
