@@ -79,12 +79,13 @@ export async function ptxdistSelect(workspaceRootPath: string, pathToMenuConfig:
         cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
     }
     cmd += 'ptxdist select ' + pathToMenuConfig;
-    const result = await exec(cmd);
-
-    if (result.stdErr !== '') {
+    
+    try {
+        await exec(cmd);
+        return true;
+    } catch (err) {
         return false;
     }
-    return true;
 }
 
 export async function ptxdistPlatform(workspaceRootPath: string, pathToPlatformConfig: string): Promise<boolean> {
@@ -100,12 +101,13 @@ export async function ptxdistPlatform(workspaceRootPath: string, pathToPlatformC
         cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
     }
     cmd += await ptxdistGetNewestBin() + ' platform ' + pathToPlatformConfig;
-    const result = await exec(cmd);
 
-    if (result.stdErr !== '') {
+    try {
+        await exec(cmd);
+        return true;
+    } catch (err) {
         return false;
     }
-    return true;
 }
 
 export async function ptxdistToolchain(workspaceRootPath: string, pathToToolchainBin: string): Promise<boolean> {
@@ -121,12 +123,13 @@ export async function ptxdistToolchain(workspaceRootPath: string, pathToToolchai
         cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
     }
     cmd += 'ptxdist toolchain ' + pathToToolchainBin;
-    const result = await exec(cmd);
 
-    if (result.stdErr !== '') {
+    try {
+        await exec(cmd);
+        return true;
+    } catch (err) {
         return false;
     }
-    return true;
 }
 
 export async function ptxdistClean(workspaceRootPath: string, all: boolean, packages?: string[]): Promise<void> {
