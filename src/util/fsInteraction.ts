@@ -43,7 +43,7 @@ async function find(searchPath: string, searchPattern: string, type?: string, de
             cmd = 'find ' + searchPath + ' ' + maxDepth + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
         }
     }
-    console.log(cmd);
+    //console.log(cmd);
     if (cmd !== '') {
         const shellResult = await exec(cmd);
         //console.log(shellResult.stdOut.trim());
