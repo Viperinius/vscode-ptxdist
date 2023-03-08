@@ -4,9 +4,9 @@ import { PtxCommandsProvider } from './ptxCommands';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { createQuickPickForConfig } from './quickSelects';
 import { MenuCompletionItemProvider } from './ptxCompletionItemProviders';
-import { getFavPkgs, getWorkspaceRoot, setCurrentMenuconfigSetting, setCurrentPlatformconfigSetting, setCurrentToolchainSetting } from './util/config';
+import { getFavPkgs, getRestrictConfigSearch, getWorkspaceRoot, setCurrentMenuconfigSetting, setCurrentPlatformconfigSetting, setCurrentToolchainSetting } from './util/config';
 import { exec } from './util/execShell';
-import { findDirs, findFiles, findLinks } from './util/fsInteraction';
+import { buildPtxprojPath, findDirs, findFiles, findLinks } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
 import { getProviderIdentifier, PtxDefaultTaskFilter, PtxDefaultTaskProvider, ptxFlags, PtxTask, PtxTaskFilter, PtxTaskProvider } from './util/tasks';
 
@@ -160,6 +160,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// register commands
 
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.refreshConfigs', () => ptxGeneralConfigProvider.refresh([])));
+
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', async () => {
 		let cmd: string = '';
 		if (workspaceRootPath !== '') {
@@ -174,82 +176,44 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPtxConfig', async (element: PtxGenConfig) => {
-		const findResult = await findFiles(workspaceRootPath, '*ptxconfig*');
-		const filteredResults = findResult.filter(name => name.includes('configs'));
-		console.log(filteredResults);
-		
-		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.'), detail: label }));
-		const quickPick = vscode.window.createQuickPick();
-		quickPick.items = items;
-		quickPick.onDidChangeSelection(([{ label, detail }]) => {
-			const shellResult = ptxInteraction.ptxdistSelect(workspaceRootPath, detail!);
-			if (!shellResult) {
-				vscode.window.showErrorMessage(`Could not set ${label} as menuconfig`);
-			}
-			else {
-				vscode.window.showInformationMessage(`Selected: ${label}`);
-				element.description = label.replace(workspaceRootPath, '.');
-				element.tooltip = detail!;
-				ptxGeneralConfigProvider.refresh([element]);
-				setCurrentMenuconfigSetting(detail!);
-				// TODO check if current platform still correct
-			}
-			quickPick.hide();
-		});
-		quickPick.onDidHide(() => quickPick.dispose());
-		quickPick.show();
+		const filePath = element.tooltip;
+		const shellResult = await ptxInteraction.ptxdistSelect(workspaceRootPath, filePath);
+		if (!shellResult) {
+			vscode.window.showErrorMessage(`Could not set ${filePath} as menuconfig`);
+		}
+		else {
+			vscode.window.showInformationMessage(`Selected: ${filePath}`);
+			ptxGeneralConfigProvider.refresh([element]);
+			setCurrentMenuconfigSetting(filePath);
+			// TODO check if current platform still correct
+		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectPlatformConfig', async (element: PtxGenConfig) => {
-		const findResult = await findFiles(workspaceRootPath, '*platformconfig*');
-		const filteredResults = findResult.filter(name => name.includes('configs'));
-		console.log(filteredResults);
-		
-		const items = filteredResults.map(label => ({ label: label.replace(workspaceRootPath, '.'), detail: label }));
-		const quickPick = vscode.window.createQuickPick();
-		quickPick.items = items;
-		quickPick.onDidChangeSelection(([{ label, detail }]) => {
-			const shellResult = ptxInteraction.ptxdistPlatform(workspaceRootPath, detail!);
-			if (!shellResult) {
-				vscode.window.showErrorMessage(`Could not set ${label} as platformconfig`);
-			}
-			else {
-				vscode.window.showInformationMessage(`Selected: ${label}`);
-				element.description = label.replace(workspaceRootPath, '.');
-				element.tooltip = detail!;
-				ptxGeneralConfigProvider.refresh([element]);
-				setCurrentPlatformconfigSetting(detail!);
-				// TODO check if current platform still correct
-			}
-			quickPick.hide();
-		});
-		quickPick.onDidHide(() => quickPick.dispose());
-		quickPick.show();
+		const filePath = element.tooltip;
+		const shellResult = await ptxInteraction.ptxdistPlatform(workspaceRootPath, filePath);
+		if (!shellResult) {
+			vscode.window.showErrorMessage(`Could not set ${filePath} as platformconfig`);
+		}
+		else {
+			vscode.window.showInformationMessage(`Selected: ${filePath}`);
+			ptxGeneralConfigProvider.refresh([element]);
+			setCurrentPlatformconfigSetting(filePath);
+			// TODO check if current menu still correct
+		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.selectToolchain', async (element: PtxGenConfig) => {
-		const findResult = await findDirs('/opt/', '*arm-linux-gnueabihf/bin');
-		
-		const items = findResult.map(label => ({ label }));
-		const quickPick = vscode.window.createQuickPick();
-		quickPick.items = items;
-		quickPick.onDidChangeSelection(([{ label }]) => {
-			const shellResult = ptxInteraction.ptxdistToolchain(workspaceRootPath, label);
-			if (!shellResult) {
-				vscode.window.showErrorMessage(`Could not set ${label} as toolchain`);
-			}
-			else {
-				vscode.window.showInformationMessage(`Selected: ${label}`);
-				element.description = label.replace(workspaceRootPath, '.');
-				element.tooltip = label;
-				ptxGeneralConfigProvider.refresh([element]);
-				setCurrentToolchainSetting(label);
-				// TODO check if current platform still correct
-			}
-			quickPick.hide();
-		});
-		quickPick.onDidHide(() => quickPick.dispose());
-		quickPick.show();
+		const dirPath = element.tooltip;
+		const shellResult = await ptxInteraction.ptxdistToolchain(workspaceRootPath, dirPath);
+		if (!shellResult) {
+			vscode.window.showErrorMessage(`Could not set ${dirPath} as toolchain`);
+		}
+		else {
+			vscode.window.showInformationMessage(`Selected: ${dirPath}`);
+			ptxGeneralConfigProvider.refresh([element]);
+			setCurrentToolchainSetting(dirPath);
+		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', async () => {

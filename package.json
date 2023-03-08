@@ -92,6 +92,11 @@
 				"title": "Select a toolchain"
 			},
 			{
+				"command": "vscode-ptxdist.refreshConfigs",
+				"title": "Refresh available configs",
+				"icon": "$(refresh)"
+			},
+			{
 				"command": "vscode-ptxdist.ptxcmd-addPreset",
 				"title": "Add a preset for this command"
 			},
@@ -215,6 +220,13 @@
 			}
 		],
 		"menus": {
+			"view/title": [
+				{
+					"command": "vscode-ptxdist.refreshConfigs",
+					"when": "view == ptxdist-general-config",
+					"group": "navigation"
+				}
+			],
 			"view/item/context": [
 				{
 					"command": "vscode-ptxdist.ptxcmd-addPreset",

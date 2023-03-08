@@ -1,21 +1,26 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { ptxdistGetSelectedConfig, ptxdistGetSelectedPlatform, ptxdistGetSelectedToolchain } from './util/ptxInteraction';
+import { ptxdistGetAvailableMenuconfigs, ptxdistGetAvailablePlatformconfigs, ptxdistGetAvailableToolchains, ptxdistGetSelectedConfig, ptxdistGetSelectedPlatform, ptxdistGetSelectedToolchain } from './util/ptxInteraction';
+import { buildPtxprojPath } from './util/fsInteraction';
 
 export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenConfig> {
     constructor(private workspaceRoot?: string) {
         if (this.workspaceRoot === '') {
             this.workspaceRoot = undefined;
         }
+        this._rootElems = this.getRootElems();
+        this._childElems = {};
     }
+
+    private _rootElems: PtxGenConfig[];
+    private _childElems: Record<string, PtxGenConfig[]>;
 
     private _onDidChangeTreeData: vscode.EventEmitter<PtxGenConfig | undefined | null | void> = new vscode.EventEmitter<PtxGenConfig | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<PtxGenConfig | undefined | null | void> = this._onDidChangeTreeData.event;
 
     refresh(elementsToModify: PtxGenConfig[]): void {
-        elementsToModify.forEach(element => {
-            this._onDidChangeTreeData.fire(element);
-        });
+        this._childElems = {};
+        this._onDidChangeTreeData.fire();
     }
 
     getTreeItem(element: PtxGenConfig): vscode.TreeItem {
@@ -24,37 +29,15 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
 
     getChildren(element?: PtxGenConfig): Thenable<PtxGenConfig[]> {
         if (element) {
-            return this.getCmds(element.getCmdId());
+            return this.getChildElems(element.getCmdId());
         }
         else {
-            return this.getCmds();
+            return Promise.resolve(this._rootElems);
         }
     }
 
-    private async getCmds(parentCmdId?: string): Promise<PtxGenConfig[]> {
-        let descMenuconfig = '-';
-        let descPlatformconfig = '-';
-        let descToolchain = '-';
-        let ws = '';
-        if (this.workspaceRoot && this.workspaceRoot !== '') {
-            ws = this.workspaceRoot;
-            if (!this.workspaceRoot.endsWith('ptxproj/') && !this.workspaceRoot.endsWith('ptxproj')) {
-                ws = this.workspaceRoot + (this.workspaceRoot.endsWith('/') ? '' : '/') + 'ptxproj/';
-            }
-            const selectedPtxconfig = await ptxdistGetSelectedConfig(ws);
-            const selectedPlatformconfig = await ptxdistGetSelectedPlatform(ws);
-            const selectedToolchain = await ptxdistGetSelectedToolchain(ws);
-            if (selectedPtxconfig.length === 1) {
-                descMenuconfig = selectedPtxconfig[0];
-            }
-            if (selectedPlatformconfig.length === 1) {
-                descPlatformconfig = selectedPlatformconfig[0];
-            }
-            if (selectedToolchain.length === 1) {
-                descToolchain = selectedToolchain[0];
-            }
-        }
-        const rootCmds = [
+    private getRootElems(): PtxGenConfig[] {
+        return [
             /*new PtxGenConfig(
                 "Current platform :", 
                 "-", 
@@ -62,29 +45,103 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 "currPlatform", 
                 vscode.TreeItemCollapsibleState.None),*/
             new PtxGenConfig(
-                "Current menuconfig :", 
-                descMenuconfig.replace(ws, '.'), 
-                descMenuconfig,
-                "selMenuConfig", 
-                vscode.TreeItemCollapsibleState.None, 
-                "vscode-ptxdist.selectPtxConfig"),
+                "Menuconfig",
+                '',
+                '',
+                "menuConfig",
+                vscode.TreeItemCollapsibleState.Expanded),
             new PtxGenConfig(
-                "Current platformconfig :", 
-                descPlatformconfig.replace(ws, '.'), 
-                descPlatformconfig,
-                "selPlatformConfig", 
-                vscode.TreeItemCollapsibleState.None,
-                "vscode-ptxdist.selectPlatformConfig"),
+                "Platformconfig",
+                '',
+                '',
+                "platformConfig",
+                vscode.TreeItemCollapsibleState.Expanded),
             new PtxGenConfig(
-                "Current toolchain :", 
-                descToolchain, 
-                descToolchain,
-                "selToolchain", 
-                vscode.TreeItemCollapsibleState.None,
-                "vscode-ptxdist.selectToolchain")
+                "Toolchain",
+                '',
+                '',
+                "toolchain",
+                vscode.TreeItemCollapsibleState.Expanded)
         ];
+    }
+
+    private async getChildElems(parentCmdId: string): Promise<PtxGenConfig[]> {
+        if (parentCmdId in this._childElems) {
+            return Promise.resolve(this._childElems[parentCmdId]);
+        }
+
+        let selMenuconfig = '-';
+        let selPlatformconfig = '-';
+        let selToolchain = '-';
+
+        if (!this.workspaceRoot) {
+            return [];
+        }
+
+        let ws = this.workspaceRoot;
+        if (!ws.endsWith('ptxproj/') && !this.workspaceRoot.endsWith('ptxproj')) {
+            ws = buildPtxprojPath(ws);
+        }
+        const selectedPtxconfig = await ptxdistGetSelectedConfig(ws);
+        const selectedPlatformconfig = await ptxdistGetSelectedPlatform(ws);
+        const selectedToolchain = await ptxdistGetSelectedToolchain(ws);
+        if (selectedPtxconfig.length === 1) {
+            selMenuconfig = selectedPtxconfig[0];
+        }
+        if (selectedPlatformconfig.length === 1) {
+            selPlatformconfig = selectedPlatformconfig[0];
+        }
+        if (selectedToolchain.length === 1) {
+            selToolchain = selectedToolchain[0];
+        }
         
-        return rootCmds;
+        const children: Record<string, PtxGenConfig[]> = {
+            "menuConfig": [],
+            "platformConfig": [],
+            "toolchain":  []
+        };
+
+        const availableMenuconfigs = await ptxdistGetAvailableMenuconfigs(this.workspaceRoot);
+        availableMenuconfigs.forEach(m => {
+            children['menuConfig'].push(new PtxGenConfig(
+                path.basename(m),
+                m.replace(ws, '.'),
+                m,
+                '',
+                vscode.TreeItemCollapsibleState.None,
+                'vscode-ptxdist.selectPtxConfig',
+                m === selMenuconfig ? 'issue-closed' : 'issue-draft'
+            ));
+        });
+
+        const availablePlatformconfigs = await ptxdistGetAvailablePlatformconfigs(this.workspaceRoot);
+        availablePlatformconfigs.forEach(p => {
+            children['platformConfig'].push(new PtxGenConfig(
+                path.basename(p),
+                p.replace(ws, '.'),
+                p,
+                '',
+                vscode.TreeItemCollapsibleState.None,
+                'vscode-ptxdist.selectPlatformConfig',
+                p === selPlatformconfig ? 'issue-closed' : 'issue-draft'
+            ));
+        });
+
+        const availableToolchains = await ptxdistGetAvailableToolchains();
+        availableToolchains.forEach(t => {
+            children['toolchain'].push(new PtxGenConfig(
+                path.basename(t),
+                t.replace(ws, '.'),
+                t,
+                '',
+                vscode.TreeItemCollapsibleState.None,
+                'vscode-ptxdist.selectToolchain',
+                t === selToolchain ? 'issue-closed' : 'issue-draft'
+            ));
+        });
+
+        this._childElems = children;
+        return this._childElems[parentCmdId];
     }
 }
 
@@ -96,7 +153,7 @@ export class PtxGenConfig extends vscode.TreeItem {
         private readonly cmdId: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         public clickCmd?: string,
-        private iconNameNoExt?: string,
+        private iconName?: string,
         private contextVal?: string
     ) {
         super(label, collapsibleState);
@@ -112,11 +169,8 @@ export class PtxGenConfig extends vscode.TreeItem {
                 "arguments": [this]
             };
         }
-        if (iconNameNoExt) {
-            this.iconPath = {
-                light: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'light', this.iconNameNoExt + '.svg'),
-                dark: path.join(__filename, '..', '..', 'resources', 'vscode-icons', 'icons', 'dark', this.iconNameNoExt + '.svg')
-            };
+        if (iconName) {
+            this.iconPath = new vscode.ThemeIcon(iconName);
         }
     }
 
