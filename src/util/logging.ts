@@ -2,11 +2,16 @@ import { LogLevel, LogOutputChannel, window } from "vscode";
 
 let outputChannel: LogOutputChannel;
 
-export function createLogger(): void {
+export function createLogger(): LogOutputChannel {
     outputChannel = window.createOutputChannel("PTXdist", { log: true });
+    return outputChannel;
 }
 
 export function logToOutput(level: LogLevel, text: string, reveal: boolean = false): void {
+    if (!outputChannel) {
+        createLogger();
+    }
+
     switch (level) {
         case LogLevel.Trace:
             outputChannel.trace(text);

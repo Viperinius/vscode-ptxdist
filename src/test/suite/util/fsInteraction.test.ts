@@ -104,18 +104,18 @@ suite('vscode-ptxdist.suite.util.fsInteraction', () => {
         const ws = '/my/awesome/path';
         assert.strictEqual(
             getPtxprojFromWorkspace(ws),
-            ws + '/ptxproj');
+            ws + '/ptxproj/');
 
         assert.strictEqual(
             getPtxprojFromWorkspace(ws + '/'),
-            ws + '/ptxproj');
+            ws + '/ptxproj/');
     });
 
     test('buildPtxprojPath', () => {
         const ws = '/just/another/one';
         assert.strictEqual(
             buildPtxprojPath(ws + '/'),
-            ws + '/ptxproj');
+            ws + '/ptxproj/');
 
         assert.strictEqual(
             buildPtxprojPath(ws, 'hello', 'world'),
