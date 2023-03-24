@@ -100,7 +100,7 @@ export async function findDirsFiles(searchPath: string, namePattern: string): Pr
 }
 
 export function getPtxprojFromWorkspace(workspaceRoot: string): string {
-    return path.join(workspaceRoot, 'ptxproj');
+    return path.join(workspaceRoot, 'ptxproj/');
 }
 
 export function buildPtxprojPath(workspaceRoot: string, ...paths: string[]): string {
