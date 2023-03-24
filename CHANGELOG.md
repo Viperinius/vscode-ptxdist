@@ -10,6 +10,21 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Set favourite commands / shortcuts to commands
 
+## [1.2.0] - 2023-03-24
+
+### Added
+
+- Add output channel `PTXdist` that is used for logging
+- The PTXdist tasks can now be cancelled with `Ctrl+C`
+
+### Changed
+
+- Colourise the icon of any selected config / toolchain to help with visibility
+
+### Fixed
+
+- Fix the detection of the selected configs if the `ptxproj` is a symlink
+
 ## [1.1.0] - 2023-03-08
 
 - Bugfixes and a new view for the PTXdist configurations

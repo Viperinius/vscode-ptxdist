@@ -3,7 +3,7 @@
 	"displayName": "PTXdist",
 	"description": "Control PTXdist from VS Code",
 	"icon": "resources/ptxdist-icon.png",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"publisher": "Viperinius",
 	"repository": {
 		"url": "https://github.com/Viperinius/vscode-ptxdist",
