@@ -9,6 +9,7 @@ import { exec } from './util/execShell';
 import { buildPtxprojPath, findDirs, findFiles, findLinks } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
 import { getProviderIdentifier, PtxDefaultTaskFilter, PtxDefaultTaskProvider, ptxFlags, PtxTask, PtxTaskFilter, PtxTaskProvider } from './util/tasks';
+import { createLogger, logToOutput } from './util/logging';
 
 let ptxTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
 let ptxDefaultTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
@@ -107,6 +108,8 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-ptxdist" is now active!');
+	createLogger();
+	logToOutput(vscode.LogLevel.Info, "Loading PTXdist extension...");
 
 	let workspaceRootPath: string = '';
 	if (vscode.workspace.workspaceFolders) {
@@ -146,7 +149,8 @@ export function activate(context: vscode.ExtensionContext) {
 			workspaceRootPath = vscode.workspace.rootPath;
 		}
 	}
-	console.log(workspaceRootPath);
+
+	logToOutput(vscode.LogLevel.Debug, workspaceRootPath);
 	if (workspaceRootPath === '') {
 		return;
 	}
@@ -169,9 +173,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		if (cmd !== '') {
 			const results = await exec(cmd);
-			console.log(results.stdOut);
-			console.log('---');
-			console.log(results.stdErr);
+			logToOutput(vscode.LogLevel.Info, results.stdOut);
+			logToOutput(vscode.LogLevel.Info, '---');
+			logToOutput(vscode.LogLevel.Info, results.stdErr);
 		}
 	}));
 

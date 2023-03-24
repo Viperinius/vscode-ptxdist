@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { platform } from 'os';
 import { exec } from './execShell';
+import { logToOutput } from './logging';
 
 export const currentOsPlatform: string = platform().toLowerCase();
 export enum OsPlatform {
@@ -43,13 +44,13 @@ async function find(searchPath: string, searchPattern: string, type?: string, de
             cmd = 'find ' + searchPath + ' ' + maxDepth + ' ' + findType + " -wholename '" + searchPattern + "' -exec realpath {} \\;";
         }
     }
-    //console.log(cmd);
+
+    logToOutput(vscode.LogLevel.Debug, cmd);
     if (cmd !== '') {
         const shellResult = await exec(cmd);
-        //console.log(shellResult.stdOut.trim());
 
         if (shellResult.stdErr !== '') {
-            console.error('find received errors from shell: \n' + shellResult.stdErr);
+            logToOutput(vscode.LogLevel.Error, 'find received errors from shell: \n' + shellResult.stdErr);
             return [];
         }
 
