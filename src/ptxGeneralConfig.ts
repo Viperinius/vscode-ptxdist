@@ -110,7 +110,8 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 '',
                 vscode.TreeItemCollapsibleState.None,
                 'vscode-ptxdist.selectPtxConfig',
-                m === selMenuconfig ? 'issue-closed' : 'issue-draft'
+                m === selMenuconfig ? 'issue-closed' : 'issue-draft',
+                m === selMenuconfig ? new vscode.ThemeColor('testing.iconPassed') : undefined
             ));
         });
 
@@ -123,7 +124,8 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 '',
                 vscode.TreeItemCollapsibleState.None,
                 'vscode-ptxdist.selectPlatformConfig',
-                p === selPlatformconfig ? 'issue-closed' : 'issue-draft'
+                p === selPlatformconfig ? 'issue-closed' : 'issue-draft',
+                p === selPlatformconfig ? new vscode.ThemeColor('testing.iconPassed') : undefined
             ));
         });
 
@@ -136,7 +138,8 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 '',
                 vscode.TreeItemCollapsibleState.None,
                 'vscode-ptxdist.selectToolchain',
-                t === selToolchain ? 'issue-closed' : 'issue-draft'
+                t === selToolchain ? 'issue-closed' : 'issue-draft',
+                t === selToolchain ? new vscode.ThemeColor('testing.iconPassed') : undefined
             ));
         });
 
@@ -154,6 +157,7 @@ export class PtxGenConfig extends vscode.TreeItem {
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         public clickCmd?: string,
         private iconName?: string,
+        private iconColor?: vscode.ThemeColor,
         private contextVal?: string
     ) {
         super(label, collapsibleState);
@@ -170,7 +174,7 @@ export class PtxGenConfig extends vscode.TreeItem {
             };
         }
         if (iconName) {
-            this.iconPath = new vscode.ThemeIcon(iconName);
+            this.iconPath = new vscode.ThemeIcon(iconName, iconColor);
         }
     }
 
