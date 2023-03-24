@@ -177,6 +177,13 @@ class PtxTaskTerminal implements vscode.Pseudoterminal {
         this.closeEmitter.fire(error || 0);
     }
 
+    handleInput(data: string): void {
+        // cancel terminal on ctrl+c
+        if (data.includes('\u0003')) {
+            this.close();
+        }
+    }
+
     private async exec(): Promise<number> {
         let commandBuilder = BuildCmd.build('ptxdist', this.commandType).withArg('-n19').withArgArray(this.flags).withArgArray(this.packages);
         const fullCommand: string = commandBuilder.generate();
