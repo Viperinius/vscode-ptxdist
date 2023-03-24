@@ -6,7 +6,7 @@ import { BuildCmd } from '../../../util/buildCmd';
 suite('vscode-ptxdist.suite.util.buildCmd', () => {
     test('instanceOfClass', () => {
         let b: BuildCmd = BuildCmd.build();
-        assert.notStrictEqual(b, new BuildCmd());
+        assert.deepStrictEqual(b, new BuildCmd());
     });
     test('buildBasic', () => {
         let b: BuildCmd = BuildCmd.build('test', 'test2', 'test3');

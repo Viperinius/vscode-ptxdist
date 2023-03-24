@@ -6,7 +6,7 @@ import { PtxCommand, PtxCommandsProvider } from '../../ptxCommands';
 suite('vscode-ptxdist.suite.ptxCommands', () => {
 	test('instanceOfClass', () => {
         let p: PtxCommandsProvider = new PtxCommandsProvider();
-        assert.notStrictEqual(p, new PtxCommandsProvider());
+        assert.deepStrictEqual(p, new PtxCommandsProvider());
     });
     test('getChildren', async () => {
         let p: PtxCommandsProvider = new PtxCommandsProvider();
