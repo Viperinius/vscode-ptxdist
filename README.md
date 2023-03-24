@@ -4,6 +4,16 @@ Integrates PTXdist commands in VS Code.
 
 > This extension is still WIP.
 
+<a href="https://github.com/Viperinius/vscode-ptxdist/actions/workflows/test.yaml">
+<img alt="Test status" src="https://img.shields.io/github/actions/workflow/status/Viperinius/vscode-ptxdist/test.yaml?label=checks">
+</a>
+<a href="https://github.com/Viperinius/vscode-ptxdist">
+<img alt="MIT license" src="https://img.shields.io/github/license/Viperinius/vscode-ptxdist">
+</a>
+<a href="https://github.com/Viperinius/vscode-ptxdist/releases">
+<img alt="Current release" src="https://img.shields.io/github/release/Viperinius/vscode-ptxdist">
+</a>
+
 ## Features
 
 Adds a new view to the side bar from which you can
