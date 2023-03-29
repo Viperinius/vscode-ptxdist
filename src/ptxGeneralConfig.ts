@@ -105,7 +105,7 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
         availableMenuconfigs.forEach(m => {
             children['menuConfig'].push(new PtxGenConfig(
                 path.basename(m),
-                m.replace(ws, '.'),
+                path.basename(path.dirname(m)),
                 m,
                 '',
                 vscode.TreeItemCollapsibleState.None,
@@ -119,7 +119,7 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
         availablePlatformconfigs.forEach(p => {
             children['platformConfig'].push(new PtxGenConfig(
                 path.basename(p),
-                p.replace(ws, '.'),
+                path.basename(path.dirname(p)),
                 p,
                 '',
                 vscode.TreeItemCollapsibleState.None,
@@ -132,8 +132,8 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
         const availableToolchains = await ptxdistGetAvailableToolchains();
         availableToolchains.forEach(t => {
             children['toolchain'].push(new PtxGenConfig(
-                path.basename(t),
-                t.replace(ws, '.'),
+                t,
+                '',
                 t,
                 '',
                 vscode.TreeItemCollapsibleState.None,
