@@ -166,6 +166,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.refreshConfigs', () => ptxGeneralConfigProvider.refresh([])));
 
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.callMenuConfig', async () => {
+		//vscode.commands.executeCommand('workbench.action.toggleMaximizedPanel');
+		await ptxInteraction.ptxdistOpenMenuconfig(workspaceRootPath);
+	}));
+
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.printWorkspaceRoot', async () => {
 		let cmd: string = '';
 		if (workspaceRootPath !== '') {

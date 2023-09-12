@@ -49,7 +49,11 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 '',
                 '',
                 "menuConfig",
-                vscode.TreeItemCollapsibleState.Expanded),
+                vscode.TreeItemCollapsibleState.Expanded,
+                undefined,
+                undefined,
+                undefined,
+                "menuConfig"),
             new PtxGenConfig(
                 "Platformconfig",
                 '',
@@ -111,7 +115,8 @@ export class PtxGeneralConfigProvider implements vscode.TreeDataProvider<PtxGenC
                 vscode.TreeItemCollapsibleState.None,
                 'vscode-ptxdist.selectPtxConfig',
                 m === selMenuconfig ? 'issue-closed' : 'issue-draft',
-                m === selMenuconfig ? new vscode.ThemeColor('testing.iconPassed') : undefined
+                m === selMenuconfig ? new vscode.ThemeColor('testing.iconPassed') : undefined,
+                m === selMenuconfig ? "menuConfig" : undefined
             ));
         });
 

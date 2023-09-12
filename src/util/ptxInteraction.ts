@@ -132,24 +132,18 @@ export async function ptxdistToolchain(workspaceRootPath: string, pathToToolchai
     }
 }
 
-export async function ptxdistClean(workspaceRootPath: string, all: boolean, packages?: string[]): Promise<void> {
+export async function ptxdistOpenMenuconfig(workspaceRootPath: string) {
     if (currentOsPlatform !== OsPlatform.linux) {
         return;
-    }    
-    
-    let cmd: string = '';    
+    }
+
+    let cmd: string = '';
     if (workspaceRootPath.includes('ptxproj')) {
         cmd += 'cd ' + workspaceRootPath + ' && ';
     }
     else {
         cmd += 'cd ' + workspaceRootPath + '/ptxproj/ && ';
     }
-    cmd += 'yes | ptxdist clean ';
-    if (!all) {
-        if (packages === undefined || packages.length === 0) {
-            return;
-        }
-        cmd += packages.join(' ');
-    }
-    runInTerminal('PTXdist', cmd, true);
+    cmd += 'ptxdist menuconfig';
+    return runInTerminal('PTXdist', cmd, true, true);
 }

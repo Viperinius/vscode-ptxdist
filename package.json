@@ -92,6 +92,11 @@
 				"title": "Select a toolchain"
 			},
 			{
+				"command": "vscode-ptxdist.callMenuConfig",
+				"title": "Call 'ptxdist menuconfig'",
+				"icon": "$(console)"
+			},
+			{
 				"command": "vscode-ptxdist.refreshConfigs",
 				"title": "Refresh available configs",
 				"icon": "$(refresh)"
@@ -231,6 +236,11 @@
 				{
 					"command": "vscode-ptxdist.ptxcmd-addPreset",
 					"when": "view == ptxdist-commands && viewItem == isCmdWithPreset"
+				},
+				{
+					"command": "vscode-ptxdist.callMenuConfig",
+					"when": "view == ptxdist-general-config && viewItem == menuConfig",
+					"group": "inline"
 				}
 			]
 		},
