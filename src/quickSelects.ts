@@ -10,7 +10,7 @@ class PackageItem implements vscode.QuickPickItem {
 	}
 }
 
-export async function createQuickPickForConfig(itemNames: string[], exclusiveSelect?: boolean) {
+export async function createQuickPickForConfig(itemNames: string[], exclusiveSelect?: boolean, stepNum?: number, stepTotal?: number) {
 	const disposeables: vscode.Disposable[] = [];
 	//let tempSelectedItems: PackageItem[] = [];
 	try {
@@ -23,6 +23,11 @@ export async function createQuickPickForConfig(itemNames: string[], exclusiveSel
 			}
 			else {
 				input.canSelectMany = true;
+			}
+
+			if (stepNum !== undefined && stepTotal !== undefined && stepTotal > 0) {
+				input.step = stepNum;
+				input.totalSteps = stepTotal;
 			}
 
 			// dont use "searching" (onDidChangeValue) for now
@@ -71,6 +76,51 @@ export async function createQuickPickForConfig(itemNames: string[], exclusiveSel
 				}),
 				input.onDidAccept(() => {
 					//resolve(tempSelectedItems.map(item => item.label));
+					resolve(input.selectedItems.map(item => item.label));
+					input.hide();
+				})
+			);
+			input.show();
+		});
+	}
+	finally {
+		disposeables.forEach(d => d.dispose());
+	}
+}
+
+export async function createQuickPick(options: string[], exclusiveSelect?: boolean, stepNum?: number, stepTotal?: number) {
+	const disposeables: vscode.Disposable[] = [];
+	try {
+		return await new Promise<string[] | undefined>((resolve, reject) => {
+			const input = vscode.window.createQuickPick<PackageItem>();
+			input.ignoreFocusOut = true;
+			if (exclusiveSelect !== undefined) {
+				input.canSelectMany = exclusiveSelect;
+			}
+			else {
+				input.canSelectMany = true;
+			}
+
+			if (stepNum !== undefined && stepTotal !== undefined && stepTotal > 0) {
+				input.step = stepNum;
+				input.totalSteps = stepTotal;
+			}
+
+			// dont use "searching" (onDidChangeValue) for now
+			input.busy = true;
+			options.forEach(opt => {
+				if (!input.items.filter(i => i.label === opt).length) {
+					input.items = input.items.concat([new PackageItem(opt)]);
+				}
+			});
+			input.busy = false;
+
+			disposeables.push(
+				input.onDidHide(() => {
+					resolve(undefined);
+					input.dispose();
+				}),
+				input.onDidAccept(() => {
 					resolve(input.selectedItems.map(item => item.label));
 					input.hide();
 				})

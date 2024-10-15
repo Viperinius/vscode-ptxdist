@@ -1,6 +1,23 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+export const PTX_PKG_STAGES: string[] = [
+    'get',
+    'extract',
+    'prepare',
+    'compile',
+    'install',
+    'targetinstall',
+];
+
+export const PTX_PKG_COMMANDS: string[] = [
+    'clean',
+    'go',
+    ...PTX_PKG_STAGES,
+    'urlcheck',
+    'drop'
+];
+
 export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> {
     constructor() {}
 
@@ -49,8 +66,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "cleanSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run", 
-                    "vscode-ptxdist.ptxcmd-cleanPkgs",
-                    "isCmdWithPreset"),
+                    "vscode-ptxdist.ptxcmd-cleanPkgs"),
                 new PtxCommand(
                     "Distclean", 
                     "Runs distclean to clean even more!", 
@@ -73,8 +89,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "goSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-goPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-goPkgs")
             ],
             "targetinstall": [
                 new PtxCommand(
@@ -83,8 +98,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "targetinstallSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-targetinstallPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-targetinstallPkgs")
             ],
             "install": [
                 new PtxCommand(
@@ -93,8 +107,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "installSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-installPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-installPkgs")
             ],
             "compile": [
                 new PtxCommand(
@@ -103,8 +116,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "compileSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-compilePkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-compilePkgs")
             ],
             "prepare": [
                 new PtxCommand(
@@ -113,8 +125,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "prepareSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-preparePkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-preparePkgs")
             ],
             "extract": [
                 new PtxCommand(
@@ -123,8 +134,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "extractSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-extractPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-extractPkgs")
             ],
             "urlcheck": [
                 new PtxCommand(
@@ -140,8 +150,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "urlcheckSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-urlcheckPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-urlcheckPkgs")
             ],
             "get": [
                 new PtxCommand(
@@ -157,8 +166,7 @@ export class PtxCommandsProvider implements vscode.TreeDataProvider<PtxCommand> 
                     "getSpecific", 
                     vscode.TreeItemCollapsibleState.None, 
                     "run",
-                    "vscode-ptxdist.ptxcmd-getPkgs",
-                    "isCmdWithPreset")
+                    "vscode-ptxdist.ptxcmd-getPkgs")
             ],
             "images": [
                 new PtxCommand(
@@ -198,7 +206,7 @@ export class PtxCommand extends vscode.TreeItem {
             this.command = {
                 "title": "",
                 "command": this.clickCmd,
-                "arguments": [this]
+                "arguments": []
             };
         }
     }

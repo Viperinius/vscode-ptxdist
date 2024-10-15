@@ -1,10 +1,11 @@
 import assert = require('assert');
 import * as vscode from 'vscode';
 import { PtxCommandsProvider } from './ptxCommands';
+import { createNewFavCmd, PtxFavCmdItem, PtxFavCmdProvider } from './ptxFavourites';
 import { PtxGeneralConfigProvider, PtxGenConfig } from './ptxGeneralConfig';
 import { createQuickPickForConfig } from './quickSelects';
 import { MenuCompletionItemProvider } from './ptxCompletionItemProviders';
-import { getFavPkgs, getRestrictConfigSearch, getWorkspaceRoot, setCurrentMenuconfigSetting, setCurrentPlatformconfigSetting, setCurrentToolchainSetting } from './util/config';
+import { getFavPkgs, getRestrictConfigSearch, getWorkspaceRoot, setAddFavCmd, setCurrentMenuconfigSetting, setCurrentPlatformconfigSetting, setCurrentToolchainSetting } from './util/config';
 import { exec } from './util/execShell';
 import { buildPtxprojPath, findDirs, findFiles, findLinks } from './util/fsInteraction';
 import * as ptxInteraction from './util/ptxInteraction';
@@ -14,29 +15,44 @@ import { createLogger, logToOutput } from './util/logging';
 let ptxTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
 let ptxDefaultTaskProviders: Map<string, vscode.Disposable> = new Map<string, vscode.Disposable>();
 
-async function prepareAndRunPtxTaskWithFlags(workspaceRootPath: string, commandType: string) {
+async function askForPtxTaskParams(commandType: string) {
 	const favPkgs = getFavPkgs();
-	const packages = await createQuickPickForConfig(favPkgs ? favPkgs : []);
+	const packages = await createQuickPickForConfig(favPkgs ? favPkgs : [], true, 1, 2);
 	if (!packages?.length) {
-		return;
+		return undefined;
 	}
 	const selectMultiple = false;
-	const flags = await createQuickPickForConfig([...ptxFlags.keys()], selectMultiple);
+	const flags = await createQuickPickForConfig([...ptxFlags.keys()], selectMultiple, 2, 2);
 	if (selectMultiple) {
 		assert(flags?.length === 1, "Should have returned only one flag value");
 	}
 	if (!flags) {
-		return;
+		return undefined;
 	}
 
-	const id = getProviderIdentifier(commandType, packages, flags[0]);
+	return {
+		id: getProviderIdentifier(commandType, packages, flags[0]),
+		pkgs: packages,
+		flags: flags,
+	};
+}
+
+async function prepareAndRunPtxTaskWithFlags(workspaceRootPath: string, commandType: string, id?: string, pkgs?: string[], flags?: string[]) {
+	if (id === undefined || pkgs === undefined || flags === undefined) {
+		const taskParams = await askForPtxTaskParams(commandType);
+		if (taskParams === undefined) {
+			return;
+		}
+		({ id, pkgs, flags } = taskParams);
+	}
+
 	if (ptxTaskProviders.size === 0 || !ptxTaskProviders.has(id)) {
-		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.ptxTaskType, new PtxTaskProvider(workspaceRootPath, packages, [commandType], flags)));
+		ptxTaskProviders.set(id, vscode.tasks.registerTaskProvider(PtxTaskProvider.ptxTaskType, new PtxTaskProvider(workspaceRootPath, pkgs, [commandType], flags)));
 	}
 	let ptxTasks = await vscode.tasks.fetchTasks(new PtxTaskFilter);
 	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id === id);
 	if (pkgsTask) {
-		vscode.tasks.executeTask(pkgsTask);
+		return await vscode.tasks.executeTask(pkgsTask);
 	}
 	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
@@ -57,7 +73,7 @@ async function prepareAndRunPtxTask(workspaceRootPath: string, commandType: stri
 	let ptxTasks = await vscode.tasks.fetchTasks(new PtxTaskFilter);
 	let pkgsTask = ptxTasks.find((element) => (element.definition as PtxTask).id === id);
 	if (pkgsTask) {
-		vscode.tasks.executeTask(pkgsTask);
+		return await vscode.tasks.executeTask(pkgsTask);
 	}
 	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
@@ -81,7 +97,7 @@ async function prepareAndRunPtxDefaultTaskWithFlags(workspaceRootPath: string, c
 	let ptxDefaultTasks = await vscode.tasks.fetchTasks(new PtxDefaultTaskFilter);
 	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id === id);
 	if (task) {
-		vscode.tasks.executeTask(task);
+		return await vscode.tasks.executeTask(task);
 	}
 	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
@@ -96,7 +112,7 @@ async function prepareAndRunPtxDefaultTask(workspaceRootPath: string, commandTyp
 	let ptxDefaultTasks = await vscode.tasks.fetchTasks(new PtxDefaultTaskFilter);
 	let task = ptxDefaultTasks.find((element) => (element.definition as PtxTask).id === id);
 	if (task) {
-		vscode.tasks.executeTask(task);
+		return await vscode.tasks.executeTask(task);
 	}
 	else {
 		vscode.window.showErrorMessage(`Could not find the task with ID: ${id}!`);
@@ -159,12 +175,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const ptxGeneralConfigProvider = new PtxGeneralConfigProvider(workspaceRootPath);
 	const ptxCommandsProvider = new PtxCommandsProvider();
+	const ptxFavCmdProvider = new PtxFavCmdProvider(workspaceRootPath);
 	vscode.window.registerTreeDataProvider('ptxdist-general-config', ptxGeneralConfigProvider);
 	vscode.window.registerTreeDataProvider('ptxdist-commands', ptxCommandsProvider);
+	vscode.window.registerTreeDataProvider('ptxdist-commands-presets', ptxFavCmdProvider);
 
 	// register commands
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.refreshConfigs', () => ptxGeneralConfigProvider.refresh([])));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.refreshFavCommands', () => ptxFavCmdProvider.refresh([])));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.callMenuConfig', async () => {
 		//vscode.commands.executeCommand('workbench.action.toggleMaximizedPanel');
@@ -225,8 +244,51 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addPreset', async () => {
-		
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addFavPackage', async () => {
+		vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.presets.favouritePackages');
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-addFavCommand', async () => {
+		//vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Viperinius.vscode-ptxdist vscode-ptxdist.presets.favouriteCommands');
+		const newCmd = await createNewFavCmd();
+		if (newCmd) {
+			setAddFavCmd(newCmd);
+		}
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.execFavCommand', async (arg?: any) => {
+		if (arg instanceof PtxFavCmdItem) {
+			for (const raw of arg.rawCmd) {
+				let cmd = raw.cmd;
+				let pkgs = raw.pkgs.split(',');
+				let flags = raw.flags.split(',');
+				if (raw.cmd.includes('drop.')) {
+					cmd = raw.cmd.split('.')[0];
+					pkgs.forEach((pkg, index, arr) => {
+						pkg += `.${raw.cmd.split('.')[1]}`;
+						arr[index] = pkg;
+					});
+				}
+
+				const emitter = new vscode.EventEmitter<number>();
+				vscode.tasks.onDidEndTaskProcess((ev) => {
+					if (ev.execution.task.name === PtxTaskProvider.getTaskName(cmd, flags, pkgs)) {
+						emitter.fire(ev.exitCode ?? -1);
+					}
+				});
+
+				const id = getProviderIdentifier(cmd, pkgs, flags[0]);
+				const execution = await prepareAndRunPtxTaskWithFlags(workspaceRootPath, cmd, id, pkgs, flags);
+				const exitCode = await new Promise<number>((res, rej) => {
+					emitter.event(code => res(code));
+				});
+
+				if (exitCode !== 0) {
+					logToOutput(vscode.LogLevel.Error, `command returned with exit code ${exitCode}, aborting rest of command chain execution`);
+					break;
+				}
+			}
+		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-ptxdist.ptxcmd-cleanAll', async () => {

@@ -55,6 +55,10 @@ export class PtxTaskProvider implements vscode.TaskProvider {
         
     }
 
+    public static getTaskName(commandType: string, flags?: string[], packages?: string[]) {
+        return `${commandType} ${flags?.join(' ')} ${packages?.join(', ')}`.trim().replace('  ', ' ');
+    }
+
     public async provideTasks(): Promise<vscode.Task[]> {
         return this.getTasks();
     }
@@ -63,7 +67,7 @@ export class PtxTaskProvider implements vscode.TaskProvider {
         const commandType: string = _task.definition.commandType;
         if (commandType) {
             const definition: PtxTask = <any>_task.definition;
-            return this.getTask(`${definition.commandType} ${definition.flags?.join(' ')}`, definition.id, definition.commandType, definition.flags ? definition.flags : [], definition.packages ? definition.packages : [], definition);
+            return this.getTask(PtxTaskProvider.getTaskName(definition.commandType, definition.flags), definition.id, definition.commandType, definition.flags ? definition.flags : [], definition.packages ? definition.packages : [], definition);
         }
         return undefined;
     }
@@ -80,10 +84,10 @@ export class PtxTaskProvider implements vscode.TaskProvider {
             }
             if (this.strippedCommandTypes.includes(command)) {
                 if (this.packages) {
-                    this.tasks!.push(this.getTask(command + ' ' + this.packages.join(', '), getProviderIdentifier(command, this.packages), command, [], this.packages));
+                    this.tasks!.push(this.getTask(PtxTaskProvider.getTaskName(command, undefined, this.packages), getProviderIdentifier(command, this.packages), command, [], this.packages));
                 }
                 else {
-                    this.tasks!.push(this.getTask(command, getProviderIdentifier(command, []), command, [], []));
+                    this.tasks!.push(this.getTask(PtxTaskProvider.getTaskName(command), getProviderIdentifier(command, []), command, [], []));
                 }
                 return;
             }
@@ -92,10 +96,10 @@ export class PtxTaskProvider implements vscode.TaskProvider {
                     return;
                 }
                 if (this.packages) {
-                    this.tasks!.push(this.getTask(command + ' ' + flagName + ' ' + this.packages.join(', '), getProviderIdentifier(command, this.packages, flagName), command, flag, this.packages));
+                    this.tasks!.push(this.getTask(PtxTaskProvider.getTaskName(command, [flagName], this.packages), getProviderIdentifier(command, this.packages, flagName), command, flag, this.packages));
                 }
                 else {
-                    this.tasks!.push(this.getTask(command + ' ' + flagName, getProviderIdentifier(command, [], flagName), command, flag, []));
+                    this.tasks!.push(this.getTask(PtxTaskProvider.getTaskName(command, [flagName]), getProviderIdentifier(command, [], flagName), command, flag, []));
                 }
             });
         });

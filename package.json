@@ -67,7 +67,36 @@
 						"description": "List of saved / favourited full PTXdist commands",
 						"default": [],
 						"items": {
-							"type": "object"
+							"type": "object",
+							"title": "Saved command chain",
+							"properties": {
+								"name": {
+									"type": "string",
+									"description": "Name to show in the UI"
+								},
+								"parts": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"title": "Single PTXdist command",
+										"properties": {
+											"cmd": {
+												"type": "string",
+												"description": "PTXdist command type"
+											},
+											"pkgs": {
+												"type": "string",
+												"description": "Comma-separated list of packages"
+											},
+											"flags": {
+												"type": "string",
+												"description": "Flags to use"
+											}
+										}
+									}
+								}
+							}
 						},
 						"type": "array"
 					}
@@ -102,8 +131,23 @@
 				"icon": "$(refresh)"
 			},
 			{
-				"command": "vscode-ptxdist.ptxcmd-addPreset",
-				"title": "Add a preset for this command"
+				"command": "vscode-ptxdist.ptxcmd-addFavPackage",
+				"title": "Add a package to favourites",
+				"icon": "$(package)"
+			},
+			{
+				"command": "vscode-ptxdist.ptxcmd-addFavCommand",
+				"title": "Add a command to favourites",
+				"icon": "$(terminal)"
+			},
+			{
+				"command": "vscode-ptxdist.refreshFavCommands",
+				"title": "Refresh favourite commands",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "vscode-ptxdist.execFavCommand",
+				"title": "Refresh favourite commands"
 			},
 			{
 				"command": "vscode-ptxdist.ptxcmd-cleanAll",
@@ -230,13 +274,24 @@
 					"command": "vscode-ptxdist.refreshConfigs",
 					"when": "view == ptxdist-general-config",
 					"group": "navigation"
+				},
+				{
+					"command": "vscode-ptxdist.ptxcmd-addFavPackage",
+					"when": "view == ptxdist-commands-presets",
+					"group": "navigation"
+				},
+				{
+					"command": "vscode-ptxdist.ptxcmd-addFavCommand",
+					"when": "view == ptxdist-commands-presets",
+					"group": "navigation"
+				},
+				{
+					"command": "vscode-ptxdist.refreshFavCommands",
+					"when": "view == ptxdist-commands-presets",
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [
-				{
-					"command": "vscode-ptxdist.ptxcmd-addPreset",
-					"when": "view == ptxdist-commands && viewItem == isCmdWithPreset"
-				},
 				{
 					"command": "vscode-ptxdist.callMenuConfig",
 					"when": "view == ptxdist-general-config && viewItem == menuConfig",
