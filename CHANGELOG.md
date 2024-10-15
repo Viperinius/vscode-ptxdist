@@ -4,11 +4,16 @@ All notable changes to the "vscode-ptxdist" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [1.3.0] - 2024-10-15
 
 ### Added
 
-- Set favourite commands / shortcuts to commands
+- Add button to call `ptxdist menuconfig`
+- Save favourite commands / shortcuts to commands
+
+### Changed
+
+- Only show the parent directory name in the description of PTXdist configurations
 
 ## [1.2.0] - 2023-03-24
 
