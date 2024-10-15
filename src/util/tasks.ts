@@ -48,7 +48,7 @@ export class PtxTaskProvider implements vscode.TaskProvider {
     protected tasks: vscode.Task[] | undefined;
     protected sharedState: string | undefined;
 
-    protected commandTypes: string[] = ['go', 'get', 'urlcheck', 'extract', 'prepare', 'compile', 'install', 'targetinstall', /*'drop', 'image',*/ 'clean'];
+    protected commandTypes: string[] = ['go', 'get', 'urlcheck', 'extract', 'prepare', 'compile', 'install', 'targetinstall', 'drop', /*'image',*/ 'clean'];
     protected strippedCommandTypes: string[] = ['clean', 'distclean'];
     
     constructor(protected workspaceRoot: string, protected packages?: string[], protected commandFilter?: string[], protected flagFilter?: string[]) {
